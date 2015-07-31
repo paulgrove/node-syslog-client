@@ -136,7 +136,7 @@ with a clients underlying TCP or UDP socket:
 ## client.close()
 
 The `close()` method closes the clients underlying TCP or UDP socket.  This
-will result in the `close` event being emitted by the sessions underlying TCP
+will result in the `close` event being emitted by the clients underlying TCP
 or UDP socket which is passed through to the client, resulting in the client
 also emitting a `close` event.
 
@@ -205,6 +205,10 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 ## Version 1.0.0 - 31/07/2015
 
  * Initial release
+
+## Version 1.0.1 - 31/07/2015
+
+ * Correct typo in README.md
 
 # Roadmap
 
