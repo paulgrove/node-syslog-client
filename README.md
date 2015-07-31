@@ -13,7 +13,7 @@ It is loaded using the `require()` function:
 
 TCP or UDP clients can then be created to log messages to remote hosts.
 
-    var client = snmp.createClient("127.0.0.1");
+    var client = syslog.createClient("127.0.0.1");
 
     client.log("example message");
 
