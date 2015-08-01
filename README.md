@@ -153,10 +153,10 @@ The `message` parameter is a string containing the message to be logged.
 The optional `options` parameter is an object, and can contain the following
 items:
 
- * `facility` - Either one of the constants defined in the `client.Facility`
+ * `facility` - Either one of the constants defined in the `syslog.Facility`
    object or the facility number to use for the message, defaults to
    `syslog.Facility.Local0`
- * `severity` - Either one of the constants defined in the `client.Severity`
+ * `severity` - Either one of the constants defined in the `syslog.Severity`
    object or the severity number to use for the message, defaults to
    `syslog.Severity.Informational`
 
@@ -209,6 +209,14 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 ## Version 1.0.1 - 31/07/2015
 
  * Correct typo in README.md
+
+## Version 1.0.2 - 31/07/2015
+
+ * Correct typo in README.md :(
+
+## Version 1.0.3 - 01/08/2015
+
+ * Correct typo in README.md :( :(
 
 # Roadmap
 
