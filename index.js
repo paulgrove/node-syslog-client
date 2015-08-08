@@ -221,7 +221,7 @@ Client.prototype.getTransport = function(cb) {
 			me.emit("error", new Error("connection closed"));
 		});
 
-		transport.on("close", me.onClose.bind(me));		
+		transport.on("close", me.onClose.bind(me));
 		transport.on("error", me.onError.bind(me));
 		
 		transport.unref();
@@ -252,7 +252,7 @@ Client.prototype.onClose = function() {
 };
 
 Client.prototype.onError = function(error) {
-	this.emit(error);
+	this.emit("error", error);
 	
 	return this;
 };

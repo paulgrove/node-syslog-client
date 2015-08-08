@@ -218,6 +218,11 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
  * Correct typo in README.md :( :(
 
+## Version 1.0.4 - 08/08/2015
+
+ * Transport error events are not propagated to an error event in the Syslog
+   client
+
 # Roadmap
 
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.

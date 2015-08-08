@@ -1,6 +1,6 @@
 {
   "name": "syslog-client",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "TCP and UDP syslog client",
   "main": "index.js",
   "directories": {
