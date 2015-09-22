@@ -1,6 +1,6 @@
 {
   "name": "syslog-client",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "TCP and UDP syslog client",
   "main": "index.js",
   "directories": {
@@ -14,8 +14,8 @@
     } 
   ],
   "repository": {
-    "type": "mercurial",
-    "url": "https://bitbucket.org/stephenwvickers/node-syslog-client"
+    "type": "git",
+    "url": "git://github.com/stephenwvickers/node-syslog-client.git"
   },
   "keywords": [
     "logger",
