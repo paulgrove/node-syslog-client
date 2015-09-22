@@ -223,7 +223,7 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
  * Transport error events are not propagated to an error event in the Syslog
    client
 
-# Version 1.0.5 - 22/10/2015
+## Version 1.0.5 - 22/10/2015
 
 # Roadmap
 
