@@ -1,5 +1,5 @@
 
-// Copyright 2015 Stephen Vickers <stephen.vickers.sv@gmail.com>
+// Copyright 2015-2016 Stephen Vickers <stephen.vickers.sv@gmail.com>
 
 var dgram = require("dgram");
 var events = require("events");

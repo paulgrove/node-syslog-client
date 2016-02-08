@@ -225,6 +225,16 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
 ## Version 1.0.5 - 22/10/2015
 
+ * Redundant release
+
+## Version 1.0.6 - 22/10/2015
+
+ * Slight formatting error in the README.md file
+
+## Version 1.0.7 - 08/02/2016
+
+ * Remove debug `console.dir()` statement accidently left in code
+
 # Roadmap
 
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
