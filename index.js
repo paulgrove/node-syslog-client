@@ -192,7 +192,6 @@ Client.prototype.getTransport = function(cb) {
 	var me = this;
 	
 	function doCb(error, transport) {
-		console.dir(me.getTransportRequests);
 		while (me.getTransportRequests.length > 0) {
 			var nextCb = me.getTransportRequests.shift();
 			nextCb(error, transport);
