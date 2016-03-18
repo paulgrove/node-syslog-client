@@ -178,6 +178,38 @@ Client.prototype.log = function(message, options, cb) {
 	
 	return this;
 };
+/**
+ * Convenience methods to send messages of a given severity
+*/
+Client.prototype.notice = function(message, options, cb) {
+  var self = this;
+  options.severity = Severity.Notice;
+  this.log(message, options, cb);
+};
+
+Client.prototype.info = function(message, options, cb) {
+  var self = this;
+  options.severity = Severity.Informational;
+  this.log(message, options, cb);
+};
+
+Client.prototype.warn = function(message, options, cb) {
+  var self = this;
+  options.severity = Severity.Warn;
+  this.log(message, options, cb);
+};
+
+Client.prototype.error = function(message, options, cb) {
+  var self = this;
+  options.severity = Severity.Error;
+  this.log(message, options, cb);
+};
+
+Client.prototype.debug = function(message, options, cb) {
+  var self = this;
+  options.severity = Severity.Debug;
+  this.log(message, options, cb);
+};
 
 Client.prototype.getTransport = function(cb) {
 	this.getTransportRequests.push(cb);
