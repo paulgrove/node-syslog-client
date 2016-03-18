@@ -181,35 +181,36 @@ Client.prototype.log = function(message, options, cb) {
 /**
  * Convenience methods to send messages of a given severity
 */
-Client.prototype.notice = function(message, cb) {
-	var self = this;
+Client.prototype.notice = function(message) {
 	options = { "severity": Severity.Notice };
-	this.log(message, options, cb);
+	this.log(message, options, this.loggerCallback);
 };
 
-Client.prototype.info = function(message, cb) {
-	var self = this;
+Client.prototype.info = function(message) {
 	options = { "severity": Severity.Informational };
-	this.log(message, options, cb);
+	this.log(message, options, this.loggerCallback);
 };
 
-Client.prototype.warn = function(message, cb) {
-	var self = this;
+Client.prototype.warn = function(message) {
 	options = { "severity": Severity.Warn };
-	this.log(message, options, cb);
+	this.log(message, options, this.loggerCallback);
 };
 
-Client.prototype.error = function(message, cb) {
-	var self = this;
+Client.prototype.error = function(message) {
 	options = { "severity": Severity.Error };
-	this.log(message, options, cb);
+	this.log(message, options, this.loggerCallback);
 };
 
-Client.prototype.debug = function(message, cb) {
-	var self = this;
+Client.prototype.debug = function(message) {
 	options.severity = Severity.Debug;
-	this.log(message, options, cb);
+	this.log(message, options, this.loggerCallback);
 };
+
+Client.prototype.loggerCallback = function(err) {
+	if(err) {
+		console.log(err);
+	}
+}
 
 Client.prototype.getTransport = function(cb) {
 	this.getTransportRequests.push(cb);
