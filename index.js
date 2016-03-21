@@ -202,7 +202,7 @@ Client.prototype.error = function(message) {
 };
 
 Client.prototype.debug = function(message) {
-	options.severity = Severity.Debug;
+	options = { "severity": Severity.Debug };
 	this.log(message, options, this.loggerCallback);
 };
 
