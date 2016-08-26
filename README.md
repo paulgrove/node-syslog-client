@@ -235,6 +235,10 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
  * Remove debug `console.dir()` statement accidently left in code
 
+## Version 1.0.8 - 26/08/2016
+
+ * Variable `key` in `_expandConstantObject()` missing `var` declaration
+
 # Roadmap
 
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
