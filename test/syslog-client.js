@@ -1,19 +1,33 @@
 var chai = require("chai"),
 	expect = chai.expect,
 	assert = chai.assert,
+	net = require("net"),
 	syslogClient = require("../index.js"),
 	//Promise = require("bluebird"),
 	syslogUdpPort = 5514,
+	syslogTcpPort = 5514,
 	dgram = require("dgram"),
-	queuedSyslogMessages = [],
-	pendingSyslogPromises = [];
+	net = require("net"),
+	rl = require("readline"),
+	queuedSyslogUdpMessages = [],
+	pendingSyslogUdpPromises = [],
+	queuedSyslogTcpMessages = [],
+	pendingSyslogTcpPromises = [];
 
-function awaitSyslogMsg() {
+function awaitSyslogUdpMsg() {
 	return new Promise(function (resolve, reject) {
-		var queued = queuedSyslogMessages.shift();
+		var queued = queuedSyslogUdpMessages.shift();
 		if (queued)
 			return resolve(queued);
-		pendingSyslogPromises.push(resolve);
+		pendingSyslogUdpPromises.push(resolve);
+	});
+}
+function awaitSyslogTcpMsg() {
+	return new Promise(function (resolve, reject) {
+		var queued = queuedSyslogTcpMessages.shift();
+		if (queued)
+			return resolve(queued);
+		pendingSyslogTcpPromises.push(resolve);
 	});
 }
 
@@ -23,25 +37,48 @@ function constructSyslogRegex(pri, hostname, msg) {
 	);
 }
 
-var udpServer = dgram.createSocket("udp4");
+var udpServer = dgram.createSocket("udp4"),
+	tcpServer;
 
-before(function (done) {
+before(function (_done) {
+	var count = 2;
+	var done = function () {
+		count--;
+		if (count === 0)
+			_done();
+	};
 	udpServer.on("message", function (msg, rinfo) {
-//		console.log("MSG", msg.toString());
-		var pend = pendingSyslogPromises.shift();
+		var pend = pendingSyslogUdpPromises.shift();
 		if (pend)
 			return pend(msg.toString());
-		queuedSyslogMessages.push(msg.toString());
+		queuedSyslogUdpMessages.push(msg.toString());
 	});
 	udpServer.on("listening", function () {
 		console.log("Started UDP syslog server");
 		done();
 	});
 	udpServer.on("error", function (err) {
-		console.log("MEMEMEMEME", err);
 		throw new Error(err);
 	});
 	udpServer.bind(syslogUdpPort);
+
+	tcpServer = net.createServer(function (socket) {
+		var lines = rl.createInterface(socket, socket);
+		lines.on("line", function (line) {
+			var pend = pendingSyslogTcpPromises.shift();
+			if (pend)
+				return pend(line);
+			queuedSyslogTcpMessages.push(line);
+		});
+	});
+	tcpServer.on("error", function (err) {
+		throw new Error(err);
+	});
+	tcpServer.listen(syslogTcpPort, function () {
+		console.log("Started TCP syslog server");
+		done();
+	});
+
 });
 
 describe("Syslog Client", function () {
@@ -55,15 +92,78 @@ describe("Syslog Client", function () {
 
 		client.log("This is a test");
 
-		return awaitSyslogMsg()
+		return awaitSyslogUdpMsg()
 		.then(function (msg) {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test"));
 			client.log("This is a second test");
-			return awaitSyslogMsg();
+			return awaitSyslogUdpMsg();
 		})
 		.then(function (msg) {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
 		});
-		
+	});
+	it("should connect to TCP and send log(s)", function () {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogTcpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Tcp
+		});
+
+		client.log("This is a test");
+
+		return awaitSyslogTcpMsg()
+		.then(function (msg) {
+			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test"));
+			client.log("This is a second test");
+			return awaitSyslogTcpMsg();
+		})
+		.then(function (msg) {
+			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+		});
+	});
+	it("should reuse the UDP transport", function () {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogUdpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Udp
+		});
+
+		client.log("Transport reuse test");
+		var transport_;
+
+		return awaitSyslogUdpMsg()
+		.then(function (msg) {
+			client.log("Transport reuse test 2");
+			transport_ = client.transport_;
+			assert.typeOf(transport_, "object");
+			return awaitSyslogUdpMsg();
+		})
+		.then(function (msg) {
+			assert.equal(transport_, client.transport_);
+		});
+	});
+	it("should reuse the TCP transport", function () {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogTcpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Tcp
+		});
+
+		client.log("Transport reuse test");
+		var transport_;
+
+		return awaitSyslogTcpMsg()
+		.then(function (msg) {
+			client.log("Transport reuse test 2");
+			assert.typeOf(transport_, "object");
+			return awaitSyslogTcpMsg();
+		})
+		.then(function (msg) {
+			assert.isTrue(transport_ === client.transport_);
+			assert.equal(transport_, client.transport_);
+		});
 	});
 });
