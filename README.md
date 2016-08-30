@@ -144,7 +144,7 @@ The following example closes a clients underlying TCP or UDP socket:
 
     client.close();
 
-## client.log(message, [options], callback)
+## client.log(message, [options], [callback])
 
 The `log()` method sends a Syslog message to a remote host.
 

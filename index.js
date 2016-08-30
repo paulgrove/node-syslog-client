@@ -132,7 +132,22 @@ Client.prototype.close = function () {
 	return this;
 };
 
-Client.prototype.log = function(message, options, cb) {
+Client.prototype.log = function() {
+	var message, options, cb;
+
+	if (typeof arguments[1] !== "string")
+		throw new Error("first argument must be string");
+
+	if (typeof arguments[1] === "function")
+		cb = arguments[1];
+	else if (typeof arguments[1] === "object")
+		options = arguments[1];
+	if (typeof arguments[2] === "function")
+		cb = arguments[2];
+
+	if (!cb)
+		cb = function () {};
+
 	var facility = options ? options.facility : Facility.Local0;
 
 	if (facility === undefined)
