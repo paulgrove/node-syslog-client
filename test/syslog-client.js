@@ -3,16 +3,18 @@ var chai = require("chai"),
 	assert = chai.assert,
 	net = require("net"),
 	syslogClient = require("../index.js"),
-	//Promise = require("bluebird"),
 	syslogUdpPort = 5514,
 	syslogTcpPort = 5514,
 	dgram = require("dgram"),
 	net = require("net"),
 	rl = require("readline"),
+	os = require("os"),
 	queuedSyslogUdpMessages = [],
 	pendingSyslogUdpPromises = [],
 	queuedSyslogTcpMessages = [],
 	pendingSyslogTcpPromises = [];
+
+chai.should();
 
 function awaitSyslogUdpMsg() {
 	return new Promise(function (resolve, reject) {
@@ -82,6 +84,85 @@ before(function (_done) {
 });
 
 describe("Syslog Client", function () {
+	it("should set options correctly with defaults", function (done) {
+		var client;
+		client = new syslogClient.createClient();
+		client.target.should.equal("127.0.0.1");
+		client.port.should.equal(514);
+		client.syslogHostname.should.equal(os.hostname());
+		client.tcpTimeout.should.equal(10000);
+		client.transport.should.equal(syslogClient.Transport.Udp);
+		
+		client = new syslogClient.createClient("127.0.0.2");
+		client.target.should.equal("127.0.0.2");
+		client.port.should.equal(514);
+		client.syslogHostname.should.equal(os.hostname());
+		client.tcpTimeout.should.equal(10000);
+		client.transport.should.equal(syslogClient.Transport.Udp);
+		
+		client = new syslogClient.createClient("127.0.0.2", {});
+		client.target.should.equal("127.0.0.2");
+		client.port.should.equal(514);
+		client.syslogHostname.should.equal(os.hostname());
+		client.tcpTimeout.should.equal(10000);
+		client.transport.should.equal(syslogClient.Transport.Udp);
+
+		client = new syslogClient.createClient("127.0.0.2", {
+			syslogHostname: "test"
+		});
+		client.target.should.equal("127.0.0.2");
+		client.port.should.equal(514);
+		client.syslogHostname.should.equal("test");
+		client.tcpTimeout.should.equal(10000);
+		client.transport.should.equal(syslogClient.Transport.Udp);
+
+		client = new syslogClient.createClient("127.0.0.2", {
+			syslogHostname: "test",
+			port: 5555
+		});
+		client.target.should.equal("127.0.0.2");
+		client.port.should.equal(5555);
+		client.syslogHostname.should.equal("test");
+		client.tcpTimeout.should.equal(10000);
+		client.transport.should.equal(syslogClient.Transport.Udp);
+
+		client = new syslogClient.createClient("127.0.0.2", {
+			syslogHostname: "test",
+			port: 5555,
+			tcpTimeout: 50
+		});
+		client.target.should.equal("127.0.0.2");
+		client.port.should.equal(5555);
+		client.syslogHostname.should.equal("test");
+		client.tcpTimeout.should.equal(50);
+		client.transport.should.equal(syslogClient.Transport.Udp);
+
+		client = new syslogClient.createClient("127.0.0.2", {
+			syslogHostname: "test",
+			port: 5555,
+			tcpTimeout: 50,
+			transport: syslogClient.Transport.Tcp
+		});
+		client.target.should.equal("127.0.0.2");
+		client.port.should.equal(5555);
+		client.syslogHostname.should.equal("test");
+		client.tcpTimeout.should.equal(50);
+		client.transport.should.equal(syslogClient.Transport.Tcp);
+
+		client = new syslogClient.createClient("127.0.0.2", {
+			syslogHostname: "test",
+			port: 5555,
+			tcpTimeout: 50,
+			transport: "Not a valid transport"
+		});
+		client.target.should.equal("127.0.0.2");
+		client.port.should.equal(5555);
+		client.syslogHostname.should.equal("test");
+		client.tcpTimeout.should.equal(50);
+		client.transport.should.equal(syslogClient.Transport.Udp);
+
+		done();
+	});
 	it("should connect to UDP and send log(s)", function () {
 		var hostname = "testhostname";
 		var client = new syslogClient.createClient("127.0.0.1", {
