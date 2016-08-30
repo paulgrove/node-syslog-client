@@ -135,8 +135,8 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogUdpMsg()
 		.then(function (msg) {
-			client.log("Transport reuse test 2");
 			transport_ = client.transport_;
+			client.log("Transport reuse test 2");
 			assert.typeOf(transport_, "object");
 			return awaitSyslogUdpMsg();
 		})
@@ -157,12 +157,12 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogTcpMsg()
 		.then(function (msg) {
-			client.log("Transport reuse test 2");
+			transport_ = client.transport_;
 			assert.typeOf(transport_, "object");
+			client.log("Transport reuse test 2");
 			return awaitSyslogTcpMsg();
 		})
 		.then(function (msg) {
-			assert.isTrue(transport_ === client.transport_);
 			assert.equal(transport_, client.transport_);
 		});
 	});
