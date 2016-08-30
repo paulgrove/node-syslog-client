@@ -4,7 +4,8 @@
   "description": "TCP and UDP syslog client",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --reporter spec",
+	"coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
   },
   "directories": {
     "example": "example"
@@ -36,5 +37,8 @@
     "udp-syslog-client"
   ],
   "author": "Stephen Vickers <stephen.vickers.sv@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "istanbul": "^0.4.5"
+  }
 }
