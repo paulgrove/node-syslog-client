@@ -3,15 +3,21 @@
   "version": "1.0.8",
   "description": "TCP and UDP syslog client",
   "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
   "directories": {
     "example": "example"
   },
-  "dependencies": {},
-  "contributors": [ 
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
+  },
+  "contributors": [
     {
       "name": "Stephen Vickers",
       "email": "stephen.vickers.sv@gmail.com"
-    } 
+    }
   ],
   "repository": {
     "type": "git",
@@ -24,7 +30,7 @@
     "syslog-client",
     "syslog-logger",
     "syslog-logging",
-	 "tcp-syslog",
+    "tcp-syslog",
     "tcp-syslog-client",
     "udp-syslog",
     "udp-syslog-client"
