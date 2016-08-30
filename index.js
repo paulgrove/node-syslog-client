@@ -135,7 +135,7 @@ Client.prototype.close = function () {
 Client.prototype.log = function() {
 	var message, options, cb;
 
-	if (typeof arguments[1] !== "string")
+	if (typeof arguments[0] !== "string")
 		throw new Error("first argument must be string");
 
 	if (typeof arguments[1] === "function")
