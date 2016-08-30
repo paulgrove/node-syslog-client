@@ -197,6 +197,9 @@ Client.prototype.log = function() {
 };
 
 Client.prototype.getTransport = function(cb) {
+	if (this.transport_ !== undefined)
+		return cb(null, this.transport_);
+
 	this.getTransportRequests.push(cb);
 
 	if (this.connecting)
@@ -256,11 +259,8 @@ Client.prototype.getTransport = function(cb) {
 };
 
 Client.prototype.onClose = function() {
-	if (this.socket)
-		delete this.socket;
-	
-	if (this.dgram)
-		delete this.dgram;
+	if (this.transport_)
+		delete this.transport_;
 
 	this.emit("close");
 	
@@ -268,6 +268,9 @@ Client.prototype.onClose = function() {
 };
 
 Client.prototype.onError = function(error) {
+	if (this.transport_)
+		delete this.transport_;
+
 	this.emit("error", error);
 	
 	return this;
