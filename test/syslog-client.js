@@ -34,9 +34,19 @@ function awaitSyslogTcpMsg() {
 	});
 }
 
+function escapeRegExp(string) {
+	return (""+string).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
+}
+
 function constructSyslogRegex(pri, hostname, msg) {
 	return new RegExp(
-		"^<"+pri+"> \\w+ \\d{1,2} \\d{2}:\\d{2}:\\d{2} "+hostname+" "+msg+"\\n?$"
+		"^<"+
+		escapeRegExp(pri)+
+		"> \\w+\\s{1,2}\\d{1,2} \\d{2}:\\d{2}:\\d{2} "+
+		escapeRegExp(hostname)+
+		" "+
+		escapeRegExp(msg)+
+		"\\n?$"
 	);
 }
 
