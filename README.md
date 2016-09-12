@@ -9,13 +9,17 @@ This module is installed using [node package manager (npm)][2]:
 
 It is loaded using the `require()` function:
 
-    var syslog = require("syslog-client");
+```js
+var syslog = require("syslog-client");
+```
 
 TCP or UDP clients can then be created to log messages to remote hosts.
 
-    var client = syslog.createClient("127.0.0.1");
+```js
+var client = syslog.createClient("127.0.0.1");
 
-    client.log("example message");
+client.log("example message");
+```
 
 [1]: https://www.ietf.org/rfc/rfc3164.txt
 [2]: https://npmjs.org
@@ -79,14 +83,16 @@ instances of the `Client` class.
 The `createClient()` function instantiates and returns an instance of the
 `Client` class:
 
-    // Default options
-    var options = {
-		syslogHostname: os.hostname(),
-		transport: syslog.Transport.Udp,
-		port: 514
-    };
-    
-    var client = syslog.createClient("127.0.0.1", options);
+```js
+// Default options
+var options = {
+    syslogHostname: os.hostname(),
+    transport: syslog.Transport.Udp,
+    port: 514
+};
+
+var client = syslog.createClient("127.0.0.1", options);
+```
 
 The optional `target` parameter defaults to `127.0.0.1`.  The optional
 `options` parameter is an object, and can contain the following items:
@@ -112,10 +118,11 @@ No arguments are passed to the callback.
 The following example prints a message to the console when a clients
 underlying TCP or UDP socket is closed:
 
-    client.on("close", function () {
-        console.log("socket closed");
-    });
-
+```js
+client.on("close", function () {
+    console.log("socket closed");
+});
+```
 ## client.on("error", callback)
 
 The `error` event is emitted by the client when the clients underlying TCP or
@@ -129,9 +136,11 @@ The following arguments will be passed to the `callback` function:
 The following example prints a message to the console when an error occurs
 with a clients underlying TCP or UDP socket:
 
-    client.on("error", function (error) {
-        console.error(error);
-    });
+```js
+client.on("error", function (error) {
+    console.error(error);
+});
+```
 
 ## client.close()
 
@@ -141,9 +150,9 @@ or UDP socket which is passed through to the client, resulting in the client
 also emitting a `close` event.
 
 The following example closes a clients underlying TCP or UDP socket:
-
-    client.close();
-
+```js
+client.close();
+```
 ## client.log(message, [options], callback)
 
 The `log()` method sends a Syslog message to a remote host.
@@ -174,22 +183,22 @@ appearing at the end), as this may cause some syslog relays/servers to
 incorrectly parse the message.
 
 The following example sends a message to a remote host:
+```js
+var options = {
+    facility: syslog.Facility.Daemon,
+    severity: syslog.Severity.Critical
+};
 
-    var options = {
-        facility: syslog.Facility.Daemon,
-        severity: syslog.Severity.Critical
-    };
-    
-    var message "something is wrong with this daemon!";
+var message "something is wrong with this daemon!";
 
-    client.log(message, options, function(error) {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log("sent message successfully");
-        }
-    });
-
+client.log(message, options, function(error) {
+    if (error) {
+        console.error(error);
+    } else {
+        console.log("sent message successfully");
+    }
+});
+```
 # Example Programs
 
 Example programs are included under the modules `example` directory.
