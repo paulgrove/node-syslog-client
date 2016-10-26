@@ -10,10 +10,7 @@
   "directories": {
     "example": "example"
   },
-  "dependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.0.2"
-  },
+  "dependencies": {},
   "contributors": [
     {
       "name": "Stephen Vickers",
@@ -26,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/stephenwvickers/node-syslog-client.git"
+    "url": "git://github.com/paulgrove/node-syslog-client.git"
   },
   "keywords": [
     "logger",
@@ -40,9 +37,11 @@
     "udp-syslog",
     "udp-syslog-client"
   ],
-  "author": "Stephen Vickers <stephen.vickers.sv@gmail.com>",
+  "author": "Paul Grove <paul.a.grove@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2",
     "istanbul": "^0.4.5"
   }
 }
