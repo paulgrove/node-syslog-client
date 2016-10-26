@@ -81,7 +81,7 @@ function Client(target, options) {
 	this.getTransportRequests = [];
 	
 	return this;
-};
+}
 
 util.inherits(Client, events.EventEmitter);
 
@@ -227,7 +227,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 		}
 		
 		me.connecting = false;
-	};
+	}
 
 	if (this.transport === Transport.Tcp) {
 		var options = {
@@ -245,7 +245,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 		} catch (err) {
 			doCb(err);
 			me.onError(err);
-		};
+		}
 
 		if (!transport)
 			return;
