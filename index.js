@@ -10,7 +10,8 @@ var util = require("util");
 function _expandConstantObject(object) {
 	var keys = [];
 	for (var key in object)
-		keys.push(key);
+		if (Object.hasOwnProperty.call(foo, key))
+			keys.push(key);
 	for (var i = 0; i < keys.length; i++)
 		object[object[keys[i]]] = parseInt(keys[i]);
 }
