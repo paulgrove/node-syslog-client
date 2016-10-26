@@ -53,7 +53,7 @@ var Severity = {
 
 _expandConstantObject(Severity);
 
-var Client = function(target, options) {
+function Client(target, options) {
 	this.target = target || "127.0.0.1";
 	
 	this.syslogHostname = os.hostname();
@@ -84,7 +84,7 @@ var Client = function(target, options) {
 
 util.inherits(Client, events.EventEmitter);
 
-Client.prototype.buildFormattedMessage = function(message, options) {
+Client.prototype.buildFormattedMessage = function buildFormattedMessage(message, options) {
 	var elems = new Date().toString().split(/\s+/);
 	
 	var month = elems[1];
@@ -116,7 +116,7 @@ Client.prototype.buildFormattedMessage = function(message, options) {
 	return new Buffer(formattedMessage);
 };
 
-Client.prototype.close = function () {
+Client.prototype.close = function close() {
 	if (this.transport === Transport.Tcp || this.transport === Transport.Udp) {
 		if (this.transport_) {
 			this.transport_.close();
@@ -129,7 +129,7 @@ Client.prototype.close = function () {
 	return this;
 };
 
-Client.prototype.log = function() {
+Client.prototype.log = function log() {
 	var message, options, cb;
 
 	if (typeof arguments[0] === "string")
@@ -203,7 +203,7 @@ Client.prototype.log = function() {
 	return this;
 };
 
-Client.prototype.getTransport = function(cb) {
+Client.prototype.getTransport = function getTransport(cb) {
 	if (this.transport_ !== undefined)
 		return cb(null, this.transport_);
 
@@ -284,7 +284,7 @@ Client.prototype.getTransport = function(cb) {
 	}
 };
 
-Client.prototype.onClose = function() {
+Client.prototype.onClose = function onClose() {
 	if (this.transport_)
 		delete this.transport_;
 
@@ -293,7 +293,7 @@ Client.prototype.onClose = function() {
 	return this;
 };
 
-Client.prototype.onError = function(error) {
+Client.prototype.onError = function onError(error) {
 	if (this.transport_)
 		delete this.transport_;
 
@@ -304,7 +304,7 @@ Client.prototype.onError = function(error) {
 
 exports.Client = Client;
 
-exports.createClient = function(target, options) {
+exports.createClient = function createClient(target, options) {
 	return new Client(target, options);
 };
 
