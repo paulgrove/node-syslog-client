@@ -1,5 +1,6 @@
-
 # syslog-client
+
+[![Build Status](https://travis-ci.org/paulgrove/node-syslog-client.svg?branch=master)](https://travis-ci.org/paulgrove/node-syslog-client)
 
 This module is a pure JavaScript implementation of the [BSD Syslog Protocol][1].
 
