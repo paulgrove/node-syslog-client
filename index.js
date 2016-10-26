@@ -117,13 +117,14 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 };
 
 Client.prototype.close = function close() {
-	if (this.transport === Transport.Tcp || this.transport === Transport.Udp) {
-		if (this.transport_) {
+	if (this.transport_) {
+		if (this.transport === Transport.Tcp)
 			this.transport_.close();
-			delete this.transport_;
-		} else {
-			this.onClose();
-		}
+		if (this.transport === Transport.Udp)
+			this.transport_.destroy();
+		delete this.transport_;
+	} else {
+		this.onClose();
 	}
 	
 	return this;
