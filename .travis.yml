@@ -6,3 +6,10 @@ node_js:
     - "0.12.17"
     - "0.10.48"
     - "iojs"
+script:
+    - npm run coverage
+addon:
+    code_climate:
+        repo_token: e17b93f9828cc7b96cd30533b65e13d3fef82b335f5dd2ae068541752dd5352a
+after_script:
+  - codeclimate-test-reporter < coverage/lcov.info
