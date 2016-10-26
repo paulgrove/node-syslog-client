@@ -72,10 +72,10 @@ function Client(target, options) {
 		if (options.tcpTimeout)
 			this.tcpTimeout = options.tcpTimeout;
 			
-		if (options.transport) {
-			if (options.transport == Transport.Udp || options.transport == Transport.Tcp)
+		if (options.transport &&
+			options.transport === Transport.Udp ||
+			options.transport === Transport.Tcp)
 				this.transport = options.transport;
-		}
 	}
 	
 	this.getTransportRequests = [];
@@ -95,14 +95,14 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 	/**
 	 ** BSD syslog requires leading 0's to be a space.
 	 **/
-	if (day[0] == "0")
+	if (day[0] === "0")
 		day = " " + day.substr(1, 1);
 	
 	var timestamp = month + " " + day + " " + time;
 	
 	var pri = (options.facility * 8) + options.severity;
 	
-	var newline = message[message.length - 1] == "\n" ? "" : "\n";
+	var newline = message[message.length - 1] === "\n" ? "" : "\n";
 	
 	var formattedMessage = "<"
 			+ pri
@@ -170,7 +170,7 @@ Client.prototype.log = function log() {
 		if (error) {
 			cb(error);
 		} else {
-			if (me.transport == Transport.Tcp) {
+			if (me.transport === Transport.Tcp) {
 				try {
 					transport.write(fm, function(error) {
 						if (error) {
@@ -183,7 +183,7 @@ Client.prototype.log = function log() {
 					me.onError(err);
 					cb(err);
 				}
-			} else if (me.transport == Transport.Udp) {
+			} else if (me.transport === Transport.Udp) {
 				try {
 					transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
 						if (error) {
@@ -229,7 +229,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 		me.connecting = false;
 	};
 
-	if (this.transport == Transport.Tcp) {
+	if (this.transport === Transport.Tcp) {
 		var options = {
 			host: this.target,
 			port: this.port,
@@ -269,7 +269,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 		});
 		
 		transport.unref();
-	} else if (this.transport == Transport.Udp) {
+	} else if (this.transport === Transport.Udp) {
 		this.transport_ = dgram.createSocket("udp" + af);
 		
 		this.transport_.on("close", this.onClose.bind(this));
