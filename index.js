@@ -167,38 +167,27 @@ Client.prototype.log = function log() {
 	var me = this;
 	
 	this.getTransport(function(error, transport) {
-		if (error) {
-			cb(error);
-		} else {
+		if (error)
+			return cb(error);
+
+		try {
 			if (me.transport === Transport.Tcp) {
-				try {
-					transport.write(fm, function(error) {
-						if (error) {
-							cb(new Error("net.write() failed: " + error.message));
-						} else {
-							cb();
-						}
-					});
-				} catch (err) {
-					me.onError(err);
-					cb(err);
-				}
+				transport.write(fm, function(error) {
+					if (error)
+						return cb(new Error("net.write() failed: " + error.message));
+				});
 			} else if (me.transport === Transport.Udp) {
-				try {
-					transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
-						if (error) {
-							cb(new Error("dgram.send() failed: " + error.message));
-						} else {
-							cb();
-						}
-					});
-				} catch (err) {
-					me.onError(err);
-					cb(err);
-				}
+				transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
+					if (error)
+						return cb(new Error("dgram.send() failed: " + error.message));
+				});
 			} else {
-				cb(new Error("unknown transport '%s' specified to Client", me.transport));
+				return cb(new Error("unknown transport '%s' specified to Client", me.transport));
 			}
+			return cb();
+		} catch (err) {
+			me.onError(err);
+			return cb(err);
 		}
 	});
 	
