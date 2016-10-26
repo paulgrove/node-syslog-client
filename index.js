@@ -121,18 +121,39 @@ Client.prototype.close = function () {
 		if (this.transport_) {
 			this.transport_.destroy();
 			delete this.transport_;
+		} else {
+			this.onClose();
 		}
 	} else if (this.transport == Transport.Udp) {
 		if (this.transport_) {
 			this.transport_.close();
 			delete this.transport_;
+		} else {
+			this.onClose();
 		}
 	}
 	
 	return this;
 };
 
-Client.prototype.log = function(message, options, cb) {
+Client.prototype.log = function() {
+	var message, options, cb;
+
+	if (typeof arguments[0] === "string")
+		message = arguments[0];
+	else
+		throw new Error("first argument must be string");
+
+	if (typeof arguments[1] === "function")
+		cb = arguments[1];
+	else if (typeof arguments[1] === "object")
+		options = arguments[1];
+	if (typeof arguments[2] === "function")
+		cb = arguments[2];
+
+	if (!cb)
+		cb = function () {};
+
 	var facility = options ? options.facility : Facility.Local0;
 
 	if (facility === undefined)
@@ -155,21 +176,31 @@ Client.prototype.log = function(message, options, cb) {
 			cb(error);
 		} else {
 			if (me.transport == Transport.Tcp) {
-				transport.write(fm, function(error) {
-					if (error) {
-						cb(new Error("net.write() failed: " + error.message));
-					} else {
-						cb();
-					}
-				});
+				try {
+					transport.write(fm, function(error) {
+						if (error) {
+							cb(new Error("net.write() failed: " + error.message));
+						} else {
+							cb();
+						}
+					});
+				} catch (err) {
+					me.onError(err);
+					cb(err);
+				}
 			} else if (me.transport == Transport.Udp) {
-				transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
-					if (error) {
-						cb(new Error("dgram.send() failed: " + error.message));
-					} else {
-						cb();
-					}
-				});
+				try {
+					transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
+						if (error) {
+							cb(new Error("dgram.send() failed: " + error.message));
+						} else {
+							cb();
+						}
+					});
+				} catch (err) {
+					me.onError(err);
+					cb(err);
+				}
 			} else {
 				cb(new Error("unknown transport '%s' specified to Client", me.transport));
 			}
@@ -180,6 +211,9 @@ Client.prototype.log = function(message, options, cb) {
 };
 
 Client.prototype.getTransport = function(cb) {
+	if (this.transport_ !== undefined)
+		return cb(null, this.transport_);
+
 	this.getTransportRequests.push(cb);
 
 	if (this.connecting)
@@ -207,28 +241,47 @@ Client.prototype.getTransport = function(cb) {
 			family: af
 		};
 		
-		var transport = net.createConnection(options, function() {
-			me.transport_ = transport;
-			doCb(null, me.transport_);
-		});
+		var transport;
+		try {
+			transport = net.createConnection(options, function() {
+				me.transport_ = transport;
+				doCb(null, me.transport_);
+			});
+		} catch (err) {
+			doCb(err);
+			me.onError(err);
+		};
+
+		if (!transport)
+			return;
 
 		transport.setTimeout(this.tcpTimeout, function() {
-			me.emit("error", new Error("connection timed out"));
+			var err = new Error("connection timed out");
+			me.emit("error", err);
+			doCb(err);
 		});
 
 		transport.on("end", function() {
-			me.emit("error", new Error("connection closed"));
+			var err = new Error("connection closed");
+			me.emit("error", err);
+			doCb(err);
 		});
 
 		transport.on("close", me.onClose.bind(me));
-		transport.on("error", me.onError.bind(me));
+		transport.on("error", function (err) {
+			doCb(err);
+			me.onError(err);
+		});
 		
 		transport.unref();
 	} else if (this.transport == Transport.Udp) {
 		this.transport_ = dgram.createSocket("udp" + af);
 		
 		this.transport_.on("close", this.onClose.bind(this));
-		this.transport_.on("error", this.onError.bind(this));
+		this.transport_.on("error", function (err) {
+			me.onError(err);
+			doCb(err);
+		});
 		
 		this.transport_.unref();
 		
@@ -239,11 +292,8 @@ Client.prototype.getTransport = function(cb) {
 };
 
 Client.prototype.onClose = function() {
-	if (this.socket)
-		delete this.socket;
-	
-	if (this.dgram)
-		delete this.dgram;
+	if (this.transport_)
+		delete this.transport_;
 
 	this.emit("close");
 	
@@ -251,6 +301,9 @@ Client.prototype.onClose = function() {
 };
 
 Client.prototype.onError = function(error) {
+	if (this.transport_)
+		delete this.transport_;
+
 	this.emit("error", error);
 	
 	return this;

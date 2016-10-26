@@ -1,17 +1,28 @@
 {
   "name": "syslog-client",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "TCP and UDP syslog client",
   "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec",
+	"coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
+  },
   "directories": {
     "example": "example"
   },
-  "dependencies": {},
-  "contributors": [ 
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
+  },
+  "contributors": [
     {
       "name": "Stephen Vickers",
       "email": "stephen.vickers.sv@gmail.com"
-    } 
+    },
+    {
+      "name": "Paul Grove",
+      "email": "paul.a.grove@gmail.com"
+    }
   ],
   "repository": {
     "type": "git",
@@ -24,11 +35,14 @@
     "syslog-client",
     "syslog-logger",
     "syslog-logging",
-	 "tcp-syslog",
+    "tcp-syslog",
     "tcp-syslog-client",
     "udp-syslog",
     "udp-syslog-client"
   ],
   "author": "Stephen Vickers <stephen.vickers.sv@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "istanbul": "^0.4.5"
+  }
 }

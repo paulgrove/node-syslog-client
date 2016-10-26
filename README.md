@@ -144,7 +144,7 @@ The following example closes a clients underlying TCP or UDP socket:
 
     client.close();
 
-## client.log(message, [options], callback)
+## client.log(message, [options], [callback])
 
 The `log()` method sends a Syslog message to a remote host.
 
@@ -194,6 +194,24 @@ The following example sends a message to a remote host:
 
 Example programs are included under the modules `example` directory.
 
+# Running tests and test coverage
+
+Tests can be run with:
+
+```
+npm test
+```
+
+Install dev dependencies before running test coverage:
+
+```
+npm install --dev
+npm run coverage
+```
+
+Coverage should be generated into `coverage/lcov-report/index.html`.
+
+
 # Bugs & Known Issues
 
 None, yet!
@@ -238,6 +256,18 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 ## Version 1.0.8 - 26/08/2016
 
  * Variable `key` in `_expandConstantObject()` missing `var` declaration
+
+## Version 1.0.9 - 30/08/2016
+
+ * Added mocha test framework
+ * Added istanbul test coverage
+ * Added tests for aprox 89% coverage
+ * Fixed bug where transports where not being reused
+ * Fixed bug where some connections would not `close()`
+ * Made `options` in `.log()` optional as per existing documentation
+ * Make `cb` in `.log()` optional and update documentation
+ * Fixed bug where `error` event and `.log` callback wouldn't predictably receive error
+ * `close` event is now always fired when `.close()` is called, regarless of open connection
 
 # Roadmap
 
