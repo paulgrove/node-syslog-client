@@ -6,17 +6,23 @@ This module is a pure JavaScript implementation of the [BSD Syslog Protocol][1].
 
 This module is installed using [node package manager (npm)][2]:
 
-    npm install syslog-client
+```
+npm install syslog-client
+```
 
 It is loaded using the `require()` function:
 
-    var syslog = require("syslog-client");
+```js
+var syslog = require("syslog-client");
+```
 
 TCP or UDP clients can then be created to log messages to remote hosts.
 
-    var client = syslog.createClient("127.0.0.1");
+```js
+var client = syslog.createClient("127.0.0.1");
 
-    client.log("example message");
+client.log("example message");
+```
 
 [1]: https://www.ietf.org/rfc/rfc3164.txt
 [2]: https://npmjs.org
