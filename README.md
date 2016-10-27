@@ -284,6 +284,10 @@ Coverage should be generated into `coverage/lcov-report/index.html`.
  * Travis-CI and codeclimate build automation and badges
  * Code linted using eslint
 
+## Version 1.0.10 - 27/10/2016
+
+ * No changes, issues with publishing to npm
+
 # License
 
 Copyright (c) 2016 Paul Grove
