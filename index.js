@@ -56,28 +56,16 @@ _expandConstantObject(Severity);
 
 function Client(target, options) {
 	this.target = target || "127.0.0.1";
+
+	if (!options)
+		options = {}
 	
-	this.syslogHostname = os.hostname();
-	this.port = 514;
-	this.tcpTimeout = 10000;
-	this.transport = Transport.Udp;
+	this.syslogHostname = options.syslogHostname ?
+		options.syslogHostname : os.hostname();
 	
-	if (options) {
-		if (options.syslogHostname)
-			this.syslogHostname = options.syslogHostname;
-			
-		if (options.port)
-			this.port = options.port;
-			
-		if (options.tcpTimeout)
-			this.tcpTimeout = options.tcpTimeout;
-			
-		if (options.transport &&
-			options.transport === Transport.Udp ||
-			options.transport === Transport.Tcp)
-				this.transport = options.transport;
-	}
-	
+	this.port = options && options.port ?  options.port : 514;
+	this.tcpTimeout = options.tcpTimeout ?  options.tcpTimeout : 10000;
+	this.transport = options.transport ?  options.transport : Transport.Udp;
 	this.getTransportRequests = [];
 	
 	return this;
