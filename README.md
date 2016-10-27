@@ -258,7 +258,7 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
  * Variable `key` in `_expandConstantObject()` missing `var` declaration
 
-## Version 1.0.9 - 30/08/2016
+## Version 1.0.9 - 27/10/2016
 
  * Added mocha test framework
  * Added istanbul test coverage
@@ -269,14 +269,14 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
  * Make `cb` in `.log()` optional and update documentation
  * Fixed bug where `error` event and `.log` callback wouldn't predictably receive error
  * `close` event is now always fired when `.close()` is called, regarless of open connection
-
-# Roadmap
-
-Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
+ * New maintainer Paul Grove
+ * Updated License
+ * Travis-CI and codeclimate build automation and badges
+ * Code linted using eslint
 
 # License
 
-Copyright (c) 2015 Stephen Vickers
+Copyright (c) 2016 Paul Grove
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -295,7 +295,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-# Author
-
-Stephen Vickers <stephen.vickers.sv@gmail.com>

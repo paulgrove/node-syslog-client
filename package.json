@@ -13,12 +13,12 @@
   "dependencies": {},
   "contributors": [
     {
-      "name": "Stephen Vickers",
-      "email": "stephen.vickers.sv@gmail.com"
-    },
-    {
       "name": "Paul Grove",
       "email": "paul.a.grove@gmail.com"
+    },
+    {
+      "name": "Stephen Vickers",
+      "email": "stephen.vickers.sv@gmail.com"
     }
   ],
   "repository": {
