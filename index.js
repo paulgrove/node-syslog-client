@@ -60,11 +60,9 @@ function Client(target, options) {
 	if (!options)
 		options = {}
 	
-	this.syslogHostname = options.syslogHostname ?
-		options.syslogHostname : os.hostname();
-	
-	this.port = options && options.port ?  options.port : 514;
-	this.tcpTimeout = options.tcpTimeout ?  options.tcpTimeout : 10000;
+	this.syslogHostname = options.syslogHostname || os.hostname();
+	this.port = options.port || 514;
+	this.tcpTimeout = options.tcpTimeout || 10000;
 	this.getTransportRequests = [];
 	
 	this.transport = Transport.Udp;
