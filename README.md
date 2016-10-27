@@ -229,13 +229,6 @@ npm run coverage
 
 Coverage should be generated into `coverage/lcov-report/index.html`.
 
-
-# Bugs & Known Issues
-
-None, yet!
-
-Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
-
 # Changes
 
 ## Version 1.0.0 - 31/07/2015
