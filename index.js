@@ -65,8 +65,13 @@ function Client(target, options) {
 	
 	this.port = options && options.port ?  options.port : 514;
 	this.tcpTimeout = options.tcpTimeout ?  options.tcpTimeout : 10000;
-	this.transport = options.transport ?  options.transport : Transport.Udp;
 	this.getTransportRequests = [];
+	
+	this.transport = Transport.Udp;
+	if (options.transport &&
+		options.transport === Transport.Udp ||
+		options.transport === Transport.Tcp)
+			this.transport = options.transport;
 	
 	return this;
 }
