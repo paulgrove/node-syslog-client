@@ -80,14 +80,17 @@ instances of the `Client` class.
 The `createClient()` function instantiates and returns an instance of the
 `Client` class:
 
-    // Default options
-    var options = {
-		syslogHostname: os.hostname(),
-		transport: syslog.Transport.Udp,
-		port: 514
-    };
-    
-    var client = syslog.createClient("127.0.0.1", options);
+```js
+// Default options
+var options = {
+	syslogHostname: os.hostname(),
+	transport: syslog.Transport.Udp,
+	port: 514
+};
+
+var client = syslog.createClient("127.0.0.1", options);
+```
+
 
 The optional `target` parameter defaults to `127.0.0.1`.  The optional
 `options` parameter is an object, and can contain the following items:
@@ -113,9 +116,11 @@ No arguments are passed to the callback.
 The following example prints a message to the console when a clients
 underlying TCP or UDP socket is closed:
 
-    client.on("close", function () {
-        console.log("socket closed");
-    });
+```js
+client.on("close", function () {
+	console.log("socket closed");
+});
+```
 
 ## client.on("error", callback)
 
@@ -130,9 +135,11 @@ The following arguments will be passed to the `callback` function:
 The following example prints a message to the console when an error occurs
 with a clients underlying TCP or UDP socket:
 
-    client.on("error", function (error) {
-        console.error(error);
-    });
+```js
+client.on("error", function (error) {
+	console.error(error);
+});
+```
 
 ## client.close()
 
@@ -143,7 +150,9 @@ also emitting a `close` event.
 
 The following example closes a clients underlying TCP or UDP socket:
 
-    client.close();
+```js
+client.close();
+```
 
 ## client.log(message, [options], [callback])
 
@@ -176,20 +185,22 @@ incorrectly parse the message.
 
 The following example sends a message to a remote host:
 
-    var options = {
-        facility: syslog.Facility.Daemon,
-        severity: syslog.Severity.Critical
-    };
-    
-    var message "something is wrong with this daemon!";
+```js
+var options = {
+	facility: syslog.Facility.Daemon,
+	severity: syslog.Severity.Critical
+};
 
-    client.log(message, options, function(error) {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log("sent message successfully");
-        }
-    });
+var message "something is wrong with this daemon!";
+
+client.log(message, options, function(error) {
+	if (error) {
+		console.error(error);
+	} else {
+		console.log("sent message successfully");
+	}
+});
+```
 
 # Example Programs
 
