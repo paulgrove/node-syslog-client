@@ -288,6 +288,10 @@ Coverage should be generated into `coverage/lcov-report/index.html`.
 
  * No changes, issues with publishing to npm
 
+## Version 1.0.11 - 14/11/2016
+
+ * Fix miscalculation of PRI for Emegency and Kernel Facitilty/Severity
+
 # License
 
 Copyright (c) 2016 Paul Grove

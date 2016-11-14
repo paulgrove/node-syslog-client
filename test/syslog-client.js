@@ -423,6 +423,31 @@ describe("Syslog Client", function () {
 			decFn();
 		});
 	});
+	it("should correctly calculate the PRI value", function (done) {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogTcpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Tcp
+		});
+
+		var count = 2,
+			decFn = function () {
+				count--;
+				if (count === 0)
+					done();
+			};
+
+		client.log("anything", {
+			facility: syslogClient.Facility.Local0,
+			severity: syslogClient.Severity.Emergency
+		}, decFn);
+		awaitSyslogTcpMsg().then(function (msg) {
+			assert.match(msg, constructSyslogRegex(128, hostname,
+				"anything"));
+			decFn();
+		});
+	})
 	it("should call on error on connection error Tcp when invalid port", function (done) {
 		var hostname = "testhostname";
 		var client = new syslogClient.createClient("127.0.0.1", {

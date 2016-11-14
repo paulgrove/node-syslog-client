@@ -140,10 +140,10 @@ Client.prototype.log = function log() {
 	if (!cb)
 		cb = function () {};
 
-	var facility = options && options.facility ?
+	var facility = options && typeof options.facility !== "undefined" ?
 		options.facility : Facility.Local0;
 
-	var severity = options && options.severity ?
+	var severity = options && typeof options.severity !== "undefined" ?
 		options.severity : Severity.Informational;
 
 	var fm = this.buildFormattedMessage(message, {
