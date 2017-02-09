@@ -38,13 +38,51 @@ function escapeRegExp(string) {
 	return (""+string).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
 }
 
-function constructSyslogRegex(pri, hostname, msg) {
+function constructSyslogRegex(pri, hostname, msg, timestamp) {
+
+	var pat_date;
+	if (typeof timestamp === 'undefined') {
+		pat_date = "\\w+\\s{1,2}\\d{1,2} \\d{2}:\\d{2}:\\d{2}";
+	} else {
+		var elems = timestamp.toString().split(/\s+/);
+
+		var month = elems[1];
+		var day = elems[2];
+		var time = elems[4];
+
+		if (day[0] === "0")
+			day = " " + day.substr(1, 1);
+
+		pat_date = escapeRegExp(month + " " + day + " " + time);
+	}
+
 	return new RegExp(
 		"^<"+
 		escapeRegExp(pri)+
-		"> \\w+\\s{1,2}\\d{1,2} \\d{2}:\\d{2}:\\d{2} "+
+		"> "+
+		pat_date+
+		" "+
 		escapeRegExp(hostname)+
 		" "+
+		escapeRegExp(msg)+
+		"\\n?$"
+	);
+}
+
+function constructRfc5424Regex(pri, hostname, msg, msgid, timestamp) {
+	var pat_date = typeof timestamp === 'undefined' ?
+		"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\.\\d+)Z" :
+		escapeRegExp(timestamp.toISOString());
+	return new RegExp(
+		"^<"+
+		escapeRegExp(pri)+
+		"> "+
+		pat_date+
+		" "+
+		escapeRegExp(hostname)+
+		" \\S{1,48} \\d+ "+
+		escapeRegExp(msgid)+
+		" - "+
 		escapeRegExp(msg)+
 		"\\n?$"
 	);
@@ -522,6 +560,56 @@ describe("Syslog Client", function () {
 		client.log("shouldn't work", function (err) {
 			err.should.be.instanceof(Error);
 			decFn();
+		});
+	});
+	it("should connect to UDP and send back-dated obsolete RFC 3164 log(s)", function () {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogUdpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Udp
+		});
+
+		var backdate = new Date(2017, 02, 01);
+		client.log("This is a test", {
+			msgid: 98765, timestamp: backdate
+		});
+
+		return awaitSyslogUdpMsg()
+		.then(function (msg) {
+			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test", backdate));
+			client.log("This is a second test", {
+				rfc3164: true, msgid: 102938
+			});
+			return awaitSyslogUdpMsg();
+		})
+		.then(function (msg) {
+			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+		});
+	});
+	it("should connect to UDP and send back-dated RFC 5424 log(s)", function () {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogUdpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Udp
+		});
+
+		var backdate = new Date(2017, 02, 01);
+		client.log("This is a test", {
+			rfc3164: false, msgid: 98765, timestamp: backdate
+		});
+
+		return awaitSyslogUdpMsg()
+		.then(function (msg) {
+			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a test", 98765, backdate));
+			client.log("This is a second test", {
+				rfc3164: false, msgid: 102938
+			});
+			return awaitSyslogUdpMsg();
+		})
+		.then(function (msg) {
+			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a second test", 102938));
 		});
 	});
 });

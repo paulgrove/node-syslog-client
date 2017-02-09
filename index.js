@@ -64,6 +64,8 @@ function Client(target, options) {
 	this.port = options.port || 514;
 	this.tcpTimeout = options.tcpTimeout || 10000;
 	this.getTransportRequests = [];
+	this.facility = options.facility || Facility.Local0;
+	this.severity =	options.severity || Severity.Informational;
 	
 	this.transport = Transport.Udp;
 	if (options.transport &&
@@ -77,34 +79,65 @@ function Client(target, options) {
 util.inherits(Client, events.EventEmitter);
 
 Client.prototype.buildFormattedMessage = function buildFormattedMessage(message, options) {
-	var elems = new Date().toString().split(/\s+/);
-	
-	var month = elems[1];
-	var day = elems[2];
-	var time = elems[4];
-	
-	/**
-	 ** BSD syslog requires leading 0's to be a space.
-	 **/
-	if (day[0] === "0")
-		day = " " + day.substr(1, 1);
-	
-	var timestamp = month + " " + day + " " + time;
+	// Some applications, like LTE CDR collection, need to be able to
+	// back-date log messages based on CDR timestamps across different
+	// time zones, because of delayed record collection with 3rd parties.
+	// Particular useful in when feeding CDRs to Splunk for indexing.
+	var date = (typeof options.timestamp === 'undefined') ? new Date() : options.timestamp;
 	
 	var pri = (options.facility * 8) + options.severity;
 	
 	var newline = message[message.length - 1] === "\n" ? "" : "\n";
 	
-	var formattedMessage = "<"
-			+ pri
-			+ "> "
-			+ timestamp
-			+ " "
-			+ this.syslogHostname
-			+ " "
-			+ message
-			+ newline;
-	
+	var timestamp, formattedMessage;
+	if (typeof options.rfc3164 !== 'boolean' || options.rfc3164) {
+		// RFC 3164 uses an obsolete date/time format and header.
+		var elems = date.toString().split(/\s+/);
+
+		var month = elems[1];
+		var day = elems[2];
+		var time = elems[4];
+
+		/**
+		 ** BSD syslog requires leading 0's to be a space.
+		 **/
+		if (day[0] === "0")
+			day = " " + day.substr(1, 1);
+
+		timestamp = month + " " + day + " " + time;
+
+		formattedMessage = "<"
+				+ pri
+				+ "> "
+				+ timestamp
+				+ " "
+				+ this.syslogHostname
+				+ " "
+				+ message
+				+ newline;
+	} else {
+		// RFC 5424 obsoletes RFC 3164 and requires RFC 3339
+		// (ISO 8601) timestamps and slightly different header.
+
+		var msgid = (typeof options.msgid === 'undefined') ? "-" : options.msgid;
+
+		formattedMessage = "<"
+				+ pri
+				+ "> "
+				+ date.toISOString()
+				+ " "
+				+ this.syslogHostname
+				+ " "
+				+ process.title.substring(process.title.lastIndexOf("/")+1, 48)
+				+ " "
+				+ process.pid
+				+ " "
+				+ msgid
+				+ " - "				// no STRUCTURED-DATA
+				+ message
+				+ newline;
+	}
+
 	return new Buffer(formattedMessage);
 };
 
@@ -123,7 +156,7 @@ Client.prototype.close = function close() {
 };
 
 Client.prototype.log = function log() {
-	var message, options, cb;
+	var message, options = {}, cb;
 
 	if (typeof arguments[0] === "string")
 		message = arguments[0];
@@ -140,17 +173,15 @@ Client.prototype.log = function log() {
 	if (!cb)
 		cb = function () {};
 
-	var facility = options && typeof options.facility !== "undefined" ?
-		options.facility : Facility.Local0;
+	if (typeof options.facility === "undefined") {
+		options.facility = this.facility;
+	}
+	if (typeof options.severity === "undefined") {
+		options.severity = this.severity;
+	}
 
-	var severity = options && typeof options.severity !== "undefined" ?
-		options.severity : Severity.Informational;
+	var fm = this.buildFormattedMessage(message, options);
 
-	var fm = this.buildFormattedMessage(message, {
-		facility: facility,
-		severity: severity
-	});
-	
 	var me = this;
 	
 	this.getTransport(function(error, transport) {
