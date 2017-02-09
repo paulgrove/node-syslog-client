@@ -66,6 +66,7 @@ function Client(target, options) {
 	this.getTransportRequests = [];
 	this.facility = options.facility || Facility.Local0;
 	this.severity =	options.severity || Severity.Informational;
+	this.rfc3164 = options.rfc3164 || true;
 	
 	this.transport = Transport.Udp;
 	if (options.transport &&
@@ -178,6 +179,9 @@ Client.prototype.log = function log() {
 	}
 	if (typeof options.severity === "undefined") {
 		options.severity = this.severity;
+	}
+	if (typeof options.rfc3164 === "undefined") {
+		options.rfc3164 = this.rfc3164;
 	}
 
 	var fm = this.buildFormattedMessage(message, options);
