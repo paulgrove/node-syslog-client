@@ -59,7 +59,7 @@ function constructSyslogRegex(pri, hostname, msg, timestamp) {
 	return new RegExp(
 		"^<"+
 		escapeRegExp(pri)+
-		"> "+
+		">"+
 		pat_date+
 		" "+
 		escapeRegExp(hostname)+

@@ -109,7 +109,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 
 		formattedMessage = "<"
 				+ pri
-				+ "> "
+				+ ">"
 				+ timestamp
 				+ " "
 				+ this.syslogHostname
