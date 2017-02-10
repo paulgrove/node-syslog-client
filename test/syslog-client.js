@@ -76,7 +76,7 @@ function constructRfc5424Regex(pri, hostname, msg, msgid, timestamp) {
 	return new RegExp(
 		"^<"+
 		escapeRegExp(pri)+
-		"> "+
+		">\\d+ "+
 		pat_date+
 		" "+
 		escapeRegExp(hostname)+
@@ -604,12 +604,12 @@ describe("Syslog Client", function () {
 		.then(function (msg) {
 			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a test", 98765, backdate));
 			client.log("This is a second test", {
-				rfc3164: false, msgid: 102938
+				rfc3164: false
 			});
 			return awaitSyslogUdpMsg();
 		})
 		.then(function (msg) {
-			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a second test", 102938));
+			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a second test", "-"));
 		});
 	});
 });

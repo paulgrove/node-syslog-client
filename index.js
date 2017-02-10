@@ -124,7 +124,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 
 		formattedMessage = "<"
 				+ pri
-				+ "> "
+				+ ">1 "				// VERSION 1
 				+ date.toISOString()
 				+ " "
 				+ this.syslogHostname
