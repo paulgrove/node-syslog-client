@@ -162,16 +162,17 @@ Client.prototype.log = function log() {
 				transport.write(fm, function(error) {
 					if (error)
 						return cb(new Error("net.write() failed: " + error.message));
+					return cb();
 				});
 			} else if (me.transport === Transport.Udp) {
 				transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
 					if (error)
 						return cb(new Error("dgram.send() failed: " + error.message));
+					return cb();
 				});
 			} else {
 				return cb(new Error("unknown transport '%s' specified to Client", me.transport));
 			}
-			return cb();
 		} catch (err) {
 			me.onError(err);
 			return cb(err);
