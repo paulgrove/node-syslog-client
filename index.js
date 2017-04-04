@@ -91,6 +91,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 	
 	//var timestamp = month + " " + day + " " + time;
         var timestamp = new Date().toISOString();
+        timestamp = timestamp.substr(0, timestamp.length - 1) + '000Z';
 	
 	var pri = (options.facility * 8) + options.severity;
 	
