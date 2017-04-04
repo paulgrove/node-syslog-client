@@ -77,19 +77,20 @@ function Client(target, options) {
 util.inherits(Client, events.EventEmitter);
 
 Client.prototype.buildFormattedMessage = function buildFormattedMessage(message, options) {
-	var elems = new Date().toString().split(/\s+/);
+	//var elems = new Date().toString().split(/\s+/);
 	
-	var month = elems[1];
-	var day = elems[2];
-	var time = elems[4];
+	//var month = elems[1];
+	//var day = elems[2];
+	//var time = elems[4];
 	
 	/**
 	 ** BSD syslog requires leading 0's to be a space.
 	 **/
-	if (day[0] === "0")
-		day = " " + day.substr(1, 1);
+	//if (day[0] === "0")
+		//day = " " + day.substr(1, 1);
 	
-	var timestamp = month + " " + day + " " + time;
+	//var timestamp = month + " " + day + " " + time;
+        var timestamp = new Date().toISOString();
 	
 	var pri = (options.facility * 8) + options.severity;
 	
@@ -97,7 +98,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 	
 	var formattedMessage = "<"
 			+ pri
-			+ "> "
+			+ ">1 "
 			+ timestamp
 			+ " "
 			+ this.syslogHostname
