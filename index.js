@@ -59,44 +59,28 @@ function Client(target, options) {
 
 	if (!options)
 		options = {}
-	
+
 	this.syslogHostname = options.syslogHostname || os.hostname();
 	this.port = options.port || 514;
 	this.tcpTimeout = options.tcpTimeout || 10000;
 	this.getTransportRequests = [];
-	
+
 	this.transport = Transport.Udp;
 	if (options.transport &&
 		options.transport === Transport.Udp ||
 		options.transport === Transport.Tcp)
 			this.transport = options.transport;
-	
+
 	return this;
 }
 
 util.inherits(Client, events.EventEmitter);
 
 Client.prototype.buildFormattedMessage = function buildFormattedMessage(message, options) {
-	//var elems = new Date().toString().split(/\s+/);
-	
-	//var month = elems[1];
-	//var day = elems[2];
-	//var time = elems[4];
-	
-	/**
-	 ** BSD syslog requires leading 0's to be a space.
-	 **/
-	//if (day[0] === "0")
-		//day = " " + day.substr(1, 1);
-	
-	//var timestamp = month + " " + day + " " + time;
-        var timestamp = new Date().toISOString();
-        timestamp = timestamp.substr(0, timestamp.length - 1) + '000Z';
-	
+    var timestamp = new Date().toISOString();
+    timestamp = timestamp.substr(0, timestamp.length - 1) + '000+00:00';
 	var pri = (options.facility * 8) + options.severity;
-	
 	var newline = message[message.length - 1] === "\n" ? "" : "\n";
-	
 	var formattedMessage = "<"
 			+ pri
 			+ ">1 "
@@ -106,7 +90,6 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 			+ " "
 			+ message
 			+ newline;
-	
 	return new Buffer(formattedMessage);
 };
 
@@ -120,7 +103,7 @@ Client.prototype.close = function close() {
 	} else {
 		this.onClose();
 	}
-	
+
 	return this;
 };
 
@@ -152,9 +135,9 @@ Client.prototype.log = function log() {
 		facility: facility,
 		severity: severity
 	});
-	
+
 	var me = this;
-	
+
 	this.getTransport(function(error, transport) {
 		if (error)
 			return cb(error);
@@ -179,7 +162,7 @@ Client.prototype.log = function log() {
 			return cb(err);
 		}
 	});
-	
+
 	return this;
 };
 
@@ -195,15 +178,15 @@ Client.prototype.getTransport = function getTransport(cb) {
 		this.connecting = true;
 
 	var af = net.isIPv4(this.target) ? 4 : 6;
-	
+
 	var me = this;
-	
+
 	function doCb(error, transport) {
 		while (me.getTransportRequests.length > 0) {
 			var nextCb = me.getTransportRequests.shift();
 			nextCb(error, transport);
 		}
-		
+
 		me.connecting = false;
 	}
 
@@ -213,7 +196,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 			port: this.port,
 			family: af
 		};
-		
+
 		var transport;
 		try {
 			transport = net.createConnection(options, function() {
@@ -245,19 +228,19 @@ Client.prototype.getTransport = function getTransport(cb) {
 			doCb(err);
 			me.onError(err);
 		});
-		
+
 		transport.unref();
 	} else if (this.transport === Transport.Udp) {
 		this.transport_ = dgram.createSocket("udp" + af);
-		
+
 		this.transport_.on("close", this.onClose.bind(this));
 		this.transport_.on("error", function (err) {
 			me.onError(err);
 			doCb(err);
 		});
-		
+
 		this.transport_.unref();
-		
+
 		doCb(null, this.transport_);
 	} else {
 		doCb(new Error("unknown transport '%s' specified to Client", this.transport));
@@ -269,7 +252,7 @@ Client.prototype.onClose = function onClose() {
 		delete this.transport_;
 
 	this.emit("close");
-	
+
 	return this;
 };
 
@@ -278,7 +261,7 @@ Client.prototype.onError = function onError(error) {
 		delete this.transport_;
 
 	this.emit("error", error);
-	
+
 	return this;
 };
 
