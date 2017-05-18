@@ -111,6 +111,11 @@ The optional `target` parameter defaults to `127.0.0.1`.  The optional
  * `transport` - Specify the transport to use, can be either
    `syslog.Transport.Udp` or `syslog.Transport.Tcp`, defaults to
    `syslog.Transport.Udp`
+ * `facility` - set default for `client.log()`; default is `syslog.Facility.Local0`.
+ * `severity` - set default for `client.log()`; default is `syslog.Severity.Informational`.
+ * `rfc3164` - set to false to use [RFC 5424](https://tools.ietf.org/html/rfc5424)
+   syslog header format; default is true for the older [RFC 3164](https://tools.ietf.org/html/rfc3164)
+   format.
 
 ## client.on("close", callback)
 
@@ -171,10 +176,15 @@ items:
 
  * `facility` - Either one of the constants defined in the `syslog.Facility`
    object or the facility number to use for the message, defaults to
-   `syslog.Facility.Local0`
+   `syslog.Facility.Local0` (see `syslog.createClient()`)
  * `severity` - Either one of the constants defined in the `syslog.Severity`
    object or the severity number to use for the message, defaults to
-   `syslog.Severity.Informational`
+   `syslog.Severity.Informational` (see `syslog.createClient()`)
+ * `rfc3164` - set to false to use [RFC 5424](https://tools.ietf.org/html/rfc5424)
+   syslog header format; default is true for the older [RFC 3164](https://tools.ietf.org/html/rfc3164)
+   format.
+ * `timestamp` - Optional Javascript Date() object to back-date the message.
+ * `msgid` - Optional [RFC 5424](https://tools.ietf.org/html/rfc5424) message-id.
 
 The `callback` function is called once the message has been sent to the remote
 host, or an error occurred.  The following arguments will be passed to the
