@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/paulgrove/node-syslog-client.svg?branch=master)](https://travis-ci.org/paulgrove/node-syslog-client) [![Code Climate](https://codeclimate.com/github/paulgrove/node-syslog-client/badges/gpa.svg)](https://codeclimate.com/github/paulgrove/node-syslog-client) [![Test Coverage](https://codeclimate.com/github/paulgrove/node-syslog-client/badges/coverage.svg)](https://codeclimate.com/github/paulgrove/node-syslog-client/coverage) [![Issue Count](https://codeclimate.com/github/paulgrove/node-syslog-client/badges/issue_count.svg)](https://codeclimate.com/github/paulgrove/node-syslog-client)
 
-This module is a pure JavaScript implementation of the [BSD Syslog Protocol][1].
+This module is a pure JavaScript implementation of the [BSD Syslog Protocol RFC 3164][1] and the [Syslog Protocol RFC 5424][2].
 
-This module is installed using [node package manager (npm)][2]:
+This module is installed using [node package manager (npm)][3]:
 
 ```
 npm install syslog-client
@@ -25,7 +25,8 @@ client.log("example message");
 ```
 
 [1]: https://www.ietf.org/rfc/rfc3164.txt
-[2]: https://npmjs.org
+[2]: https://tools.ietf.org/html/rfc5424
+[3]: https://npmjs.org
 
 # Constants
 
@@ -302,9 +303,25 @@ Coverage should be generated into `coverage/lcov-report/index.html`.
 
  * Fix miscalculation of PRI for Emegency and Kernel Facitilty/Severity
 
+## Version 1.1.0 - 18/05/2017
+
+ * Fix issue resolving IP class from hostname
+ * Call log callback asynchronously, preventing issues when closing in that callback
+ * Support for RFC 5424
+ * Fix erroneous space after PRI
+
+# Additional Contributors
+
+* SirWumpus (github)
+* acanimal (github)
+* cdscott (github)
+* mccarthy (github)
+* MarkHerhold (github)
+* JeremyBernier (github)
+
 # License
 
-Copyright (c) 2016 Paul Grove
+Copyright (c) 2017 Paul Grove
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
