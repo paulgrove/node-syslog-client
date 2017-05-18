@@ -192,7 +192,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 	else
 		this.connecting = true;
 
-	var af = net.isIPv4(this.target) ? 4 : 6;
+	var af = net.isIPv6(this.target) ? 6 : 4;
 	
 	var me = this;
 	
