@@ -64,6 +64,10 @@ function Client(target, options) {
 	this.port = options.port || 514;
 	this.tcpTimeout = options.tcpTimeout || 10000;
 	this.getTransportRequests = [];
+	this.facility = options.facility || Facility.Local0;
+	this.severity =	options.severity || Severity.Informational;
+	this.rfc3164 = !!options.rfc3164;
+	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
 
 	this.transport = Transport.Udp;
 	if (options.transport &&
@@ -77,19 +81,66 @@ function Client(target, options) {
 util.inherits(Client, events.EventEmitter);
 
 Client.prototype.buildFormattedMessage = function buildFormattedMessage(message, options) {
-    var timestamp = new Date().toISOString();
-    timestamp = timestamp.substr(0, timestamp.length - 1) + '000+00:00';
+	// Some applications, like LTE CDR collection, need to be able to
+	// back-date log messages based on CDR timestamps across different
+	// time zones, because of delayed record collection with 3rd parties.
+	// Particular useful in when feeding CDRs to Splunk for indexing.
+	var date = (typeof options.timestamp === 'undefined') ? new Date() : options.timestamp;
+
 	var pri = (options.facility * 8) + options.severity;
+
 	var newline = message[message.length - 1] === "\n" ? "" : "\n";
-	var formattedMessage = "<"
-			+ pri
-			+ ">1 "
-			+ timestamp
-			+ " "
-			+ this.syslogHostname
-			+ " "
-			+ message
-			+ newline;
+
+	var timestamp, formattedMessage;
+	if (typeof options.rfc3164 !== 'boolean' || options.rfc3164) {
+		// RFC 3164 uses an obsolete date/time format and header.
+		var elems = date.toString().split(/\s+/);
+
+		var month = elems[1];
+		var day = elems[2];
+		var time = elems[4];
+
+		/**
+		 ** BSD syslog requires leading 0's to be a space.
+		 **/
+		if (day[0] === "0")
+			day = " " + day.substr(1, 1);
+
+		timestamp = month + " " + day + " " + time;
+
+		formattedMessage = "<"
+				+ pri
+				+ ">"
+				+ timestamp
+				+ " "
+				+ this.syslogHostname
+				+ " "
+				+ message
+				+ newline;
+	} else {
+		// RFC 5424 obsoletes RFC 3164 and requires RFC 3339
+		// (ISO 8601) timestamps and slightly different header.
+
+		var msgid = (typeof options.msgid === 'undefined') ? "-" : options.msgid;
+
+
+		formattedMessage = "<"
+				+ pri
+				+ ">1 "				// VERSION 1
+				+ date.toISOString().replace(/Z$//) + '000+00:00'
+				+ " "
+				+ this.syslogHostname
+				+ " "
+				+ this.appName
+				+ " "
+				+ process.pid
+				+ " "
+				+ msgid
+				+ " - "				// no STRUCTURED-DATA
+				+ message
+				+ newline;
+	}
+
 	return new Buffer(formattedMessage);
 };
 
@@ -108,7 +159,7 @@ Client.prototype.close = function close() {
 };
 
 Client.prototype.log = function log() {
-	var message, options, cb;
+	var message, options = {}, cb;
 
 	if (typeof arguments[0] === "string")
 		message = arguments[0];
@@ -125,16 +176,17 @@ Client.prototype.log = function log() {
 	if (!cb)
 		cb = function () {};
 
-	var facility = options && typeof options.facility !== "undefined" ?
-		options.facility : Facility.Local0;
+	if (typeof options.facility === "undefined") {
+		options.facility = this.facility;
+	}
+	if (typeof options.severity === "undefined") {
+		options.severity = this.severity;
+	}
+	if (typeof options.rfc3164 === "undefined") {
+		options.rfc3164 = this.rfc3164;
+	}
 
-	var severity = options && typeof options.severity !== "undefined" ?
-		options.severity : Severity.Informational;
-
-	var fm = this.buildFormattedMessage(message, {
-		facility: facility,
-		severity: severity
-	});
+	var fm = this.buildFormattedMessage(message, options);
 
 	var me = this;
 
@@ -147,16 +199,17 @@ Client.prototype.log = function log() {
 				transport.write(fm, function(error) {
 					if (error)
 						return cb(new Error("net.write() failed: " + error.message));
+					return cb();
 				});
 			} else if (me.transport === Transport.Udp) {
 				transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
 					if (error)
 						return cb(new Error("dgram.send() failed: " + error.message));
+					return cb();
 				});
 			} else {
 				return cb(new Error("unknown transport '%s' specified to Client", me.transport));
 			}
-			return cb();
 		} catch (err) {
 			me.onError(err);
 			return cb(err);
@@ -177,7 +230,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 	else
 		this.connecting = true;
 
-	var af = net.isIPv4(this.target) ? 4 : 6;
+	var af = net.isIPv6(this.target) ? 6 : 4;
 
 	var me = this;
 
