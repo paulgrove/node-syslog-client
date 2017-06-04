@@ -1,5 +1,5 @@
 {
-  "name": "syslog-client",
+  "name": "syslog-rfc5424-client",
   "version": "1.1.1",
   "description": "TCP and UDP syslog client RFC 5424 & RFC 3164",
   "main": "index.js",

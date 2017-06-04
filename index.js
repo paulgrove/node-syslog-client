@@ -127,11 +127,11 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 		formattedMessage = "<"
 				+ pri
 				+ ">1 "				// VERSION 1
-				+ date.toISOString().replace(/Z$//) + '000+00:00'
+				+ date.toISOString().replace(/Z$/, '') + '000+00:00'
 				+ " "
-				+ this.syslogHostname
+				+ options.syslogHostname
 				+ " "
-				+ this.appName
+				+ options.appName
 				+ " "
 				+ process.pid
 				+ " "
@@ -185,6 +185,9 @@ Client.prototype.log = function log() {
 	if (typeof options.rfc3164 === "undefined") {
 		options.rfc3164 = this.rfc3164;
 	}
+    if (typeof options.appName === "undefined") {
+        options.appName = this.appName;
+    }
 
 	var fm = this.buildFormattedMessage(message, options);
 
