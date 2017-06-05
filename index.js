@@ -68,6 +68,7 @@ function Client(target, options) {
 	this.severity =	options.severity || Severity.Informational;
 	this.rfc3164 = !!options.rfc3164;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
+    this.dateFormatter = options.dateFormatter || function(date) { return date.toISOString(); };
 
 	this.transport = Transport.Udp;
 	if (options.transport &&
@@ -128,7 +129,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 				+ pri
 				+ ">1"				// VERSION 1
                 + " "
-				+ date.toISOString().replace(/Z$/, '') + '000+00:00'
+				+ this.dateFormatter.call(date)
 				+ " "
 				+ options.syslogHostname
 				+ " "

@@ -118,6 +118,7 @@ The optional `target` parameter defaults to `127.0.0.1`.  The optional
    syslog header format; default is true for the older [RFC 3164](https://tools.ietf.org/html/rfc3164)
    format.
  * `appName` - set the APP-NAME field when using `rfc5424`; default uses `process.title`
+ * `dateFormatter` - change the default date formatter when using `rfc5424`; interface: `function(date) { return string; }`; defaults to `function(date) { return date.toISOString(); }`
 
 ## client.on("close", callback)
 
