@@ -1,0 +1,133 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/timgarthwaite/.nvm/versions/node/v6.5.0/bin/node',
+1 verbose cli   '/Users/timgarthwaite/.nvm/versions/node/v6.5.0/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@3.10.3
+3 info using node@v6.5.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   escapedName: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/timgarthwaite/Projects/syslog-rfc5424-client',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/timgarthwaite/.npm/syslog-rfc5424-client/1.1.2/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/timgarthwaite/.npm correctMkdir not in flight; initializing
+10 info lifecycle syslog-rfc5424-client@1.1.2~prepublish: syslog-rfc5424-client@1.1.2
+11 silly lifecycle syslog-rfc5424-client@1.1.2~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/Users/timgarthwaite/.npm/syslog-rfc5424-client/1.1.2/package.tgz',
+12 verbose tar pack   '/Users/timgarthwaite/Projects/syslog-rfc5424-client' ]
+13 verbose tarball /Users/timgarthwaite/.npm/syslog-rfc5424-client/1.1.2/package.tgz
+14 verbose folder /Users/timgarthwaite/Projects/syslog-rfc5424-client
+15 verbose addLocalTarball adding from inside cache /Users/timgarthwaite/.npm/syslog-rfc5424-client/1.1.2/package.tgz
+16 verbose correctMkdir /Users/timgarthwaite/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd syslog-rfc5424-client@1.1.2
+18 verbose afterAdd /Users/timgarthwaite/.npm/syslog-rfc5424-client/1.1.2/package/package.json not in flight; writing
+19 verbose correctMkdir /Users/timgarthwaite/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /Users/timgarthwaite/.npm/syslog-rfc5424-client/1.1.2/package/package.json written
+21 silly publish { name: 'syslog-rfc5424-client',
+21 silly publish   version: '1.1.2',
+21 silly publish   description: 'TCP and UDP syslog client RFC 5424 & RFC 3164',
+21 silly publish   main: 'index.js',
+21 silly publish   scripts:
+21 silly publish    { test: 'mocha --reporter spec',
+21 silly publish      coverage: 'istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec' },
+21 silly publish   directories: { example: 'example' },
+21 silly publish   dependencies: {},
+21 silly publish   contributors:
+21 silly publish    [ { name: 'Paul Grove', email: 'paul.a.grove@gmail.com' },
+21 silly publish      { name: 'Stephen Vickers',
+21 silly publish        email: 'stephen.vickers.sv@gmail.com' },
+21 silly publish      { name: 'Tim Garthwaite', email: 'tim@mividstudios.com' } ],
+21 silly publish   repository:
+21 silly publish    { type: 'git',
+21 silly publish      url: 'git://github.com/paulgrove/node-syslog-client.git' },
+21 silly publish   keywords:
+21 silly publish    [ 'logger',
+21 silly publish      'logging',
+21 silly publish      'syslog',
+21 silly publish      'syslog-client',
+21 silly publish      'syslog-logger',
+21 silly publish      'syslog-logging',
+21 silly publish      'tcp-syslog',
+21 silly publish      'tcp-syslog-client',
+21 silly publish      'udp-syslog',
+21 silly publish      'udp-syslog-client' ],
+21 silly publish   author: { name: 'Paul Grove', email: 'paul.a.grove@gmail.com' },
+21 silly publish   license: 'MIT',
+21 silly publish   devDependencies:
+21 silly publish    { chai: '^3.5.0',
+21 silly publish      mocha: '^3.0.2',
+21 silly publish      bluebird: '^3.4.6',
+21 silly publish      istanbul: '^0.4.5' },
+21 silly publish   readme: '# syslog-client\n\n[![Build Status](https://travis-ci.org/paulgrove/node-syslog-client.svg?branch=master)](https://travis-ci.org/paulgrove/node-syslog-client) [![Code Climate](https://codeclimate.com/github/paulgrove/node-syslog-client/badges/gpa.svg)](https://codeclimate.com/github/paulgrove/node-syslog-client) [![Test Coverage](https://codeclimate.com/github/paulgrove/node-syslog-client/badges/coverage.svg)](https://codeclimate.com/github/paulgrove/node-syslog-client/coverage) [![Issue Count](https://codeclimate.com/github/paulgrove/node-syslog-client/badges/issue_count.svg)](https://codeclimate.com/github/paulgrove/node-syslog-client)\n\nThis module is a pure JavaScript implementation of the [BSD Syslog Protocol RFC 3164][1] and the [Syslog Protocol RFC 5424][2].\n\nThis module is installed using [node package manager (npm)][3]:\n\n```\nnpm install syslog-client\n```\n\nIt is loaded using the `require()` function:\n\n```js\nvar syslog = require("syslog-client");\n```\n\nTCP or UDP clients can then be created to log messages to remote hosts.\n\n```js\nvar client = syslog.createClient("127.0.0.1");\n\nclient.log("example message");\n```\n\n[1]: https://www.ietf.org/rfc/rfc3164.txt\n[2]: https://tools.ietf.org/html/rfc5424\n[3]: https://npmjs.org\n\n# Constants\n\nThe following sections describe constants exported and used by this module.\n\n## syslog.Transport\n\nThis object contains constants for all valid values for the `transport`\nattribute passed to the `options` argument for the `createClient()` function.\nThe following constants are defined in this object:\n\n * `Tcp`\n * `Udp`\n\n## syslog.Facility\n\nThis object contains constants for all valid values for the `facility`\nattribute passed to the `options` argument for the `log()` method on the\n`Client` class.  The following constants are defined in this object:\n\n * `Kernel` - 0\n * `User` - 1\n * `System` - 3\n * `Audit` - 13\n * `Alert` - 14\n * `Local0` - 16\n * `Local1` - 17\n * `Local2` - 18\n * `Local3` - 19\n * `Local4` - 20\n * `Local5` - 21\n * `Local6` - 22\n * `Local7` - 23\n\n## syslog.Severity\n\nThis object contains constants for all valid values for the `severity`\nattribute passed to the `options` argument for the `log()` method on the\n`Client` class.  The following constants are defined in this object:\n\n * `Emergency` - 0\n * `Alert` - 1\n * `Critical` - 2\n * `Error` - 3\n * `Warning` - 4\n * `Notice` - 5\n * `Informational` - 6\n * `Debug` - 7\n\n# Using This Module\n\nAll messages are sent using an instance of the `Client` class.  This\nmodule exports the `createClient()` function which is used to create\ninstances of the `Client` class.\n\n## syslog.createClient([target], [options])\n\nThe `createClient()` function instantiates and returns an instance of the\n`Client` class:\n\n```js\n// Default options\nvar options = {\n\tsyslogHostname: os.hostname(),\n\ttransport: syslog.Transport.Udp,\n\tport: 514\n};\n\nvar client = syslog.createClient("127.0.0.1", options);\n```\n\n\nThe optional `target` parameter defaults to `127.0.0.1`.  The optional\n`options` parameter is an object, and can contain the following items:\n\n * `port` - TCP or UDP port to send messages to, defaults to `514`\n * `syslogHostname` - Value to place into the `HOSTNAME` part of the `HEADER`\n   part of each message sent, defaults to `os.hostname()`\n * `tcpTimeout` - Number of milliseconds to wait for a connection attempt to\n   the specified Syslog target, and the number of milliseconds to wait for\n   TCP acknowledgements when sending messages using the TCP transport,\n   defaults to `10000` (i.e. 10 seconds)\n * `transport` - Specify the transport to use, can be either\n   `syslog.Transport.Udp` or `syslog.Transport.Tcp`, defaults to\n   `syslog.Transport.Udp`\n * `facility` - set default for `client.log()`; default is `syslog.Facility.Local0`.\n * `severity` - set default for `client.log()`; default is `syslog.Severity.Informational`.\n * `rfc3164` - set to false to use [RFC 5424](https://tools.ietf.org/html/rfc5424)\n   syslog header format; default is true for the older [RFC 3164](https://tools.ietf.org/html/rfc3164)\n   format.\n * `appName` - set the APP-NAME field when using `rfc5424`; default uses `process.title`\n\n## client.on("close", callback)\n\nThe `close` event is emitted by the client when the clients underlying TCP or\nUDP socket is closed.\n\nNo arguments are passed to the callback.\n\nThe following example prints a message to the console when a clients\nunderlying TCP or UDP socket is closed:\n\n```js\nclient.on("close", function () {\n\tconsole.log("socket closed");\n});\n```\n\n## client.on("error", callback)\n\nThe `error` event is emitted by the client when the clients underlying TCP or\nUDP socket emits an error.\n\nThe following arguments will be passed to the `callback` function:\n\n * `error` - An instance of the `Error` class, the exposed `message` attribute\n   will contain a detailed error message.\n\nThe following example prints a message to the console when an error occurs\nwith a clients underlying TCP or UDP socket:\n\n```js\nclient.on("error", function (error) {\n\tconsole.error(error);\n});\n```\n\n## client.close()\n\nThe `close()` method closes the clients underlying TCP or UDP socket.  This\nwill result in the `close` event being emitted by the clients underlying TCP\nor UDP socket which is passed through to the client, resulting in the client\nalso emitting a `close` event.\n\nThe following example closes a clients underlying TCP or UDP socket:\n\n```js\nclient.close();\n```\n\n## client.log(message, [options], [callback])\n\nThe `log()` method sends a Syslog message to a remote host.\n\nThe `message` parameter is a string containing the message to be logged.\n\nThe optional `options` parameter is an object, and can contain the following\nitems:\n\n * `facility` - Either one of the constants defined in the `syslog.Facility`\n   object or the facility number to use for the message, defaults to\n   `syslog.Facility.Local0` (see `syslog.createClient()`)\n * `severity` - Either one of the constants defined in the `syslog.Severity`\n   object or the severity number to use for the message, defaults to\n   `syslog.Severity.Informational` (see `syslog.createClient()`)\n * `rfc3164` - set to false to use [RFC 5424](https://tools.ietf.org/html/rfc5424)\n   syslog header format; default is true for the older [RFC 3164](https://tools.ietf.org/html/rfc3164)\n   format.\n * `timestamp` - Optional Javascript Date() object to back-date the message.\n * `msgid` - Optional [RFC 5424](https://tools.ietf.org/html/rfc5424) message-id.\n\nThe `callback` function is called once the message has been sent to the remote\nhost, or an error occurred.  The following arguments will be passed to the\n`callback` function:\n\n * `error` - Instance of the `Error` class or a sub-class, or `null` if no\n   error occurred\n\nEach message sent to the remote host will have a newline character appended\nto it, if one is not already appended.  Care should be taken to ensure newline\ncharacters are not embedded within the message passed to this method (i.e. not\nappearing at the end), as this may cause some syslog relays/servers to\nincorrectly parse the message.\n\nThe following example sends a message to a remote host:\n\n```js\nvar options = {\n\tfacility: syslog.Facility.Daemon,\n\tseverity: syslog.Severity.Critical\n};\n\nvar message "something is wrong with this daemon!";\n\nclient.log(message, options, function(error) {\n\tif (error) {\n\t\tconsole.error(error);\n\t} else {\n\t\tconsole.log("sent message successfully");\n\t}\n});\n```\n\n# Example Programs\n\nExample programs are included under the modules `example` directory.\n\n# Running tests and test coverage\n\nTests can be run with:\n\n```\nnpm test\n```\n\nInstall dev dependencies before running test coverage:\n\n```\nnpm install --dev\nnpm run coverage\n```\n\nCoverage should be generated into `coverage/lcov-report/index.html`.\n\n# Changes\n\n## Version 1.0.0 - 31/07/2015\n\n * Initial release\n\n## Version 1.0.1 - 31/07/2015\n\n * Correct typo in README.md\n\n## Version 1.0.2 - 31/07/2015\n\n * Correct typo in README.md :(\n\n## Version 1.0.3 - 01/08/2015\n\n * Correct typo in README.md :( :(\n\n## Version 1.0.4 - 08/08/2015\n\n * Transport error events are not propagated to an error event in the Syslog\n   client\n\n## Version 1.0.5 - 22/10/2015\n\n * Redundant release\n\n## Version 1.0.6 - 22/10/2015\n\n * Slight formatting error in the README.md file\n\n## Version 1.0.7 - 08/02/2016\n\n * Remove debug `console.dir()` statement accidently left in code\n\n## Version 1.0.8 - 26/08/2016\n\n * Variable `key` in `_expandConstantObject()` missing `var` declaration\n\n## Version 1.0.9 - 27/10/2016\n\n * Added mocha test framework\n * Added istanbul test coverage\n * Added tests for aprox 89% coverage\n * Fixed bug where transports where not being reused\n * Fixed bug where some connections would not `close()`\n * Made `options` in `.log()` optional as per existing documentation\n * Make `cb` in `.log()` optional and update documentation\n * Fixed bug where `error` event and `.log` callback wouldn\'t predictably receive error\n * `close` event is now always fired when `.close()` is called, regarless of open connection\n * New maintainer Paul Grove\n * Updated License\n * Travis-CI and codeclimate build automation and badges\n * Code linted using eslint\n\n## Version 1.0.10 - 27/10/2016\n\n * No changes, issues with publishing to npm\n\n## Version 1.0.11 - 14/11/2016\n\n * Fix miscalculation of PRI for Emegency and Kernel Facitilty/Severity\n\n## Version 1.1.0 - 18/05/2017\n\n * Fix issue resolving IP class from hostname\n * Call log callback asynchronously, preventing issues when closing in that callback\n * Support for RFC 5424\n * Fix erroneous space after PRI\n\n# Additional Contributors\n\n* SirWumpus (github)\n* acanimal (github)\n* cdscott (github)\n* mccarthy (github)\n* MarkHerhold (github)\n* JeremyBernier (github)\n\n# License\n\nCopyright (c) 2017 Paul Grove\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: '85799e2491a0b7ac5961cf6d44b45ab30933ee3b',
+21 silly publish   bugs: { url: 'https://github.com/paulgrove/node-syslog-client/issues' },
+21 silly publish   homepage: 'https://github.com/paulgrove/node-syslog-client#readme',
+21 silly publish   _id: 'syslog-rfc5424-client@1.1.2',
+21 silly publish   _shasum: '473804fab164751644980aab40379b13eedf9e46',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name syslog-rfc5424-client
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry data Result {
+26 silly mapToRegistry   raw: 'syslog-rfc5424-client',
+26 silly mapToRegistry   scope: null,
+26 silly mapToRegistry   escapedName: 'syslog-rfc5424-client',
+26 silly mapToRegistry   name: 'syslog-rfc5424-client',
+26 silly mapToRegistry   rawSpec: '',
+26 silly mapToRegistry   spec: 'latest',
+26 silly mapToRegistry   type: 'tag' }
+27 silly mapToRegistry uri https://registry.npmjs.org/syslog-rfc5424-client
+28 verbose publish registryBase https://registry.npmjs.org/
+29 silly publish uploading /Users/timgarthwaite/.npm/syslog-rfc5424-client/1.1.2/package.tgz
+30 verbose request uri https://registry.npmjs.org/syslog-rfc5424-client
+31 verbose request sending authorization for write operation
+32 info attempt registry request try #1 at 12:39:13 PM
+33 verbose request using bearer token for auth
+34 verbose request id 61fa2356d454a6a2
+35 http request PUT https://registry.npmjs.org/syslog-rfc5424-client
+36 http 403 https://registry.npmjs.org/syslog-rfc5424-client
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=300',
+37 verbose headers   'content-length': '95',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Mon, 05 Jun 2017 16:39:15 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-bos8221-BOS',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1496680754.748130,VS0,VE1589',
+37 verbose headers   vary: 'Accept-Encoding' }
+38 verbose request invalidating /Users/timgarthwaite/.npm/registry.npmjs.org/syslog-rfc5424-client on PUT
+39 error publish Failed PUT 403
+40 verbose stack Error: "You cannot publish over the previously published version 1.1.2." : syslog-rfc5424-client
+40 verbose stack     at makeError (/Users/timgarthwaite/.nvm/versions/node/v6.5.0/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+40 verbose stack     at CachingRegistryClient.<anonymous> (/Users/timgarthwaite/.nvm/versions/node/v6.5.0/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+40 verbose stack     at Request._callback (/Users/timgarthwaite/.nvm/versions/node/v6.5.0/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+40 verbose stack     at Request.self.callback (/Users/timgarthwaite/.nvm/versions/node/v6.5.0/lib/node_modules/npm/node_modules/request/request.js:200:22)
+40 verbose stack     at emitTwo (events.js:106:13)
+40 verbose stack     at Request.emit (events.js:191:7)
+40 verbose stack     at Request.<anonymous> (/Users/timgarthwaite/.nvm/versions/node/v6.5.0/lib/node_modules/npm/node_modules/request/request.js:1067:10)
+40 verbose stack     at emitOne (events.js:101:20)
+40 verbose stack     at Request.emit (events.js:188:7)
+40 verbose stack     at IncomingMessage.<anonymous> (/Users/timgarthwaite/.nvm/versions/node/v6.5.0/lib/node_modules/npm/node_modules/request/request.js:988:12)
+41 verbose statusCode 403
+42 verbose pkgid syslog-rfc5424-client
+43 verbose cwd /Users/timgarthwaite/Projects/syslog-rfc5424-client
+44 error Darwin 16.6.0
+45 error argv "/Users/timgarthwaite/.nvm/versions/node/v6.5.0/bin/node" "/Users/timgarthwaite/.nvm/versions/node/v6.5.0/bin/npm" "publish"
+46 error node v6.5.0
+47 error npm  v3.10.3
+48 error code E403
+49 error "You cannot publish over the previously published version 1.1.2." : syslog-rfc5424-client
+50 error If you need help, you may report this error at:
+50 error     <https://github.com/npm/npm/issues>
+51 verbose exit [ 1, true ]
