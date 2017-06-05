@@ -291,7 +291,16 @@ Client.prototype.getTransport = function getTransport(cb) {
 
 		transport.unref();
 	} else if (this.transport === Transport.Udp) {
-		this.transport_ = dgram.createSocket("udp" + af);
+        try {
+            this.transport_ = dgram.createSocket("udp" + af);
+        }
+        catch (err) {
+            doCb(err);
+            this.onError(err);
+        }
+
+        if (!this.transport_)
+			return;
 
 		this.transport_.on("close", this.onClose.bind(this));
 		this.transport_.on("error", function (err) {
