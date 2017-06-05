@@ -113,7 +113,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 				+ ">"
 				+ timestamp
 				+ " "
-				+ this.syslogHostname
+				+ options.syslogHostname
 				+ " "
 				+ message
 				+ newline;
@@ -126,7 +126,8 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 
 		formattedMessage = "<"
 				+ pri
-				+ ">1 "				// VERSION 1
+				+ ">1"				// VERSION 1
+                + " "
 				+ date.toISOString().replace(/Z$/, '') + '000+00:00'
 				+ " "
 				+ options.syslogHostname
@@ -187,6 +188,9 @@ Client.prototype.log = function log() {
 	}
     if (typeof options.appName === "undefined") {
         options.appName = this.appName;
+    }
+    if (typeof options.syslogHostname === "undefined") {
+        options.syslogHostname = this.syslogHostname;
     }
 
 	var fm = this.buildFormattedMessage(message, options);
