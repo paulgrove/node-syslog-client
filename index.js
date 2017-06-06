@@ -68,7 +68,7 @@ function Client(target, options) {
 	this.severity =	options.severity || Severity.Informational;
 	this.rfc3164 = !!options.rfc3164;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
-    this.dateFormatter = options.dateFormatter || function(date) { return date.toISOString(); };
+    this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
 
 	this.transport = Transport.Udp;
 	if (options.transport &&
