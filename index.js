@@ -66,7 +66,6 @@ function Client(target, options) {
 	this.getTransportRequests = [];
 	this.facility = options.facility || Facility.Local0;
 	this.severity =	options.severity || Severity.Informational;
-	this.rfc3164 = !!options.rfc3164;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
     this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
 
