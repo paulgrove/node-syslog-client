@@ -59,21 +59,23 @@ function Client(target, options) {
 
 	if (!options)
 		options = {}
-	
+
 	this.syslogHostname = options.syslogHostname || os.hostname();
 	this.port = options.port || 514;
 	this.tcpTimeout = options.tcpTimeout || 10000;
 	this.getTransportRequests = [];
 	this.facility = options.facility || Facility.Local0;
 	this.severity =	options.severity || Severity.Informational;
-	this.rfc3164 = options.rfc3164 || true;
-	
+  this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
+	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
+    this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
+
 	this.transport = Transport.Udp;
 	if (options.transport &&
 		options.transport === Transport.Udp ||
 		options.transport === Transport.Tcp)
 			this.transport = options.transport;
-	
+
 	return this;
 }
 
@@ -85,11 +87,11 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 	// time zones, because of delayed record collection with 3rd parties.
 	// Particular useful in when feeding CDRs to Splunk for indexing.
 	var date = (typeof options.timestamp === 'undefined') ? new Date() : options.timestamp;
-	
+
 	var pri = (options.facility * 8) + options.severity;
-	
+
 	var newline = message[message.length - 1] === "\n" ? "" : "\n";
-	
+
 	var timestamp, formattedMessage;
 	if (typeof options.rfc3164 !== 'boolean' || options.rfc3164) {
 		// RFC 3164 uses an obsolete date/time format and header.
@@ -112,7 +114,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 				+ ">"
 				+ timestamp
 				+ " "
-				+ this.syslogHostname
+				+ options.syslogHostname
 				+ " "
 				+ message
 				+ newline;
@@ -122,14 +124,16 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 
 		var msgid = (typeof options.msgid === 'undefined') ? "-" : options.msgid;
 
+
 		formattedMessage = "<"
 				+ pri
-				+ ">1 "				// VERSION 1
-				+ date.toISOString()
+				+ ">1"				// VERSION 1
+                + " "
+				+ this.dateFormatter.call(date)
 				+ " "
-				+ this.syslogHostname
+				+ options.syslogHostname
 				+ " "
-				+ process.title.substring(process.title.lastIndexOf("/")+1, 48)
+				+ options.appName
 				+ " "
 				+ process.pid
 				+ " "
@@ -152,7 +156,7 @@ Client.prototype.close = function close() {
 	} else {
 		this.onClose();
 	}
-	
+
 	return this;
 };
 
@@ -180,14 +184,20 @@ Client.prototype.log = function log() {
 	if (typeof options.severity === "undefined") {
 		options.severity = this.severity;
 	}
-	if (typeof options.rfc3164 === "undefined") {
+	if (typeof options.rfc3164 !== "boolean") {
 		options.rfc3164 = this.rfc3164;
 	}
+  if (typeof options.appName === "undefined") {
+    options.appName = this.appName;
+  }
+  if (typeof options.syslogHostname === "undefined") {
+    options.syslogHostname = this.syslogHostname;
+  }
 
 	var fm = this.buildFormattedMessage(message, options);
 
 	var me = this;
-	
+
 	this.getTransport(function(error, transport) {
 		if (error)
 			return cb(error);
@@ -213,7 +223,7 @@ Client.prototype.log = function log() {
 			return cb(err);
 		}
 	});
-	
+
 	return this;
 };
 
@@ -229,15 +239,15 @@ Client.prototype.getTransport = function getTransport(cb) {
 		this.connecting = true;
 
 	var af = net.isIPv6(this.target) ? 6 : 4;
-	
+
 	var me = this;
-	
+
 	function doCb(error, transport) {
 		while (me.getTransportRequests.length > 0) {
 			var nextCb = me.getTransportRequests.shift();
 			nextCb(error, transport);
 		}
-		
+
 		me.connecting = false;
 	}
 
@@ -247,7 +257,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 			port: this.port,
 			family: af
 		};
-		
+
 		var transport;
 		try {
 			transport = net.createConnection(options, function() {
@@ -279,19 +289,28 @@ Client.prototype.getTransport = function getTransport(cb) {
 			doCb(err);
 			me.onError(err);
 		});
-		
+
 		transport.unref();
 	} else if (this.transport === Transport.Udp) {
-		this.transport_ = dgram.createSocket("udp" + af);
-		
+        try {
+            this.transport_ = dgram.createSocket("udp" + af);
+        }
+        catch (err) {
+            doCb(err);
+            this.onError(err);
+        }
+
+        if (!this.transport_)
+			return;
+
 		this.transport_.on("close", this.onClose.bind(this));
 		this.transport_.on("error", function (err) {
 			me.onError(err);
 			doCb(err);
 		});
-		
+
 		this.transport_.unref();
-		
+
 		doCb(null, this.transport_);
 	} else {
 		doCb(new Error("unknown transport '%s' specified to Client", this.transport));
@@ -303,7 +322,7 @@ Client.prototype.onClose = function onClose() {
 		delete this.transport_;
 
 	this.emit("close");
-	
+
 	return this;
 };
 
@@ -312,7 +331,7 @@ Client.prototype.onError = function onError(error) {
 		delete this.transport_;
 
 	this.emit("error", error);
-	
+
 	return this;
 };
 

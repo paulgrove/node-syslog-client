@@ -141,14 +141,14 @@ describe("Syslog Client", function () {
 		client.syslogHostname.should.equal(os.hostname());
 		client.tcpTimeout.should.equal(10000);
 		client.transport.should.equal(syslogClient.Transport.Udp);
-		
+
 		client = new syslogClient.createClient("127.0.0.2");
 		client.target.should.equal("127.0.0.2");
 		client.port.should.equal(514);
 		client.syslogHostname.should.equal(os.hostname());
 		client.tcpTimeout.should.equal(10000);
 		client.transport.should.equal(syslogClient.Transport.Udp);
-		
+
 		client = new syslogClient.createClient("127.0.0.2", {});
 		client.target.should.equal("127.0.0.2");
 		client.port.should.equal(514);
@@ -409,11 +409,11 @@ describe("Syslog Client", function () {
 		(function () {
 			client.log([]);
 		}).should.throw(Error);
-		
+
 		(function () {
 			client.log(undefined);
 		}).should.throw(Error);
-		
+
 		(function () {
 			client.log(null);
 		}).should.throw(Error);
