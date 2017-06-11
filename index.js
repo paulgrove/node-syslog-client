@@ -66,6 +66,7 @@ function Client(target, options) {
 	this.getTransportRequests = [];
 	this.facility = options.facility || Facility.Local0;
 	this.severity =	options.severity || Severity.Informational;
+  this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
     this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
 
@@ -183,15 +184,15 @@ Client.prototype.log = function log() {
 	if (typeof options.severity === "undefined") {
 		options.severity = this.severity;
 	}
-	if (typeof options.rfc3164 === "undefined") {
+	if (typeof options.rfc3164 !== "boolean") {
 		options.rfc3164 = this.rfc3164;
 	}
-    if (typeof options.appName === "undefined") {
-        options.appName = this.appName;
-    }
-    if (typeof options.syslogHostname === "undefined") {
-        options.syslogHostname = this.syslogHostname;
-    }
+  if (typeof options.appName === "undefined") {
+    options.appName = this.appName;
+  }
+  if (typeof options.syslogHostname === "undefined") {
+    options.syslogHostname = this.syslogHostname;
+  }
 
 	var fm = this.buildFormattedMessage(message, options);
 
