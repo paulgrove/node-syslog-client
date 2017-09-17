@@ -4,7 +4,7 @@
 var syslog = require ("../");
 
 if (process.argv.length < 5) {
-	console.log ("usage: udp-client <target> <port> <facility> <severity> "
+	console.log ("usage: tcp-client <target> <port> <facility> <severity> "
 			+ "<syslog-hostname> <message>");
 	process.exit (1);
 }
