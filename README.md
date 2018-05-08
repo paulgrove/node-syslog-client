@@ -50,6 +50,15 @@ attribute passed to the `options` argument for the `log()` method on the
  * `Kernel` - 0
  * `User` - 1
  * `System` - 3
+ * `Daemon` - 3,
+ * `Auth` - 4,
+ * `Syslog` - 5,
+ * `Lpr` - 6,
+ * `News` - 7,
+ * `Uucp` - 8,
+ * `Cron` - 9,
+ * `Authpriv` - 10,
+ * `Ftp` - 11,
  * `Audit` - 13
  * `Alert` - 14
  * `Local0` - 16
