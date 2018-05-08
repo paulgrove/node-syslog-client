@@ -17,8 +17,9 @@ function _expandConstantObject(object) {
 }
 
 var Transport = {
-	Tcp: 1,
-	Udp: 2
+	Tcp:  1,
+	Udp:  2,
+	Unix: 3
 };
 
 _expandConstantObject(Transport);
@@ -73,7 +74,8 @@ function Client(target, options) {
 	this.transport = Transport.Udp;
 	if (options.transport &&
 		options.transport === Transport.Udp ||
-		options.transport === Transport.Tcp)
+		options.transport === Transport.Tcp ||
+		options.transport === Transport.Unix)
 			this.transport = options.transport;
 
 	return this;
@@ -148,7 +150,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 
 Client.prototype.close = function close() {
 	if (this.transport_) {
-		if (this.transport === Transport.Tcp)
+		if (this.transport === Transport.Tcp || this.transport == Transport.Unix)
 			this.transport_.destroy();
 		if (this.transport === Transport.Udp)
 			this.transport_.close();
@@ -203,7 +205,7 @@ Client.prototype.log = function log() {
 			return cb(error);
 
 		try {
-			if (me.transport === Transport.Tcp) {
+			if (me.transport === Transport.Tcp || me.transport == Transport.Unix) {
 				transport.write(fm, function(error) {
 					if (error)
 						return cb(new Error("net.write() failed: " + error.message));
@@ -251,12 +253,20 @@ Client.prototype.getTransport = function getTransport(cb) {
 		me.connecting = false;
 	}
 
-	if (this.transport === Transport.Tcp) {
-		var options = {
-			host: this.target,
-			port: this.port,
-			family: af
-		};
+	if (this.transport === Transport.Tcp || this.transport === Transport.Unix) {
+		var options;
+		if (this.transport === Transport.Unix) {
+			options = {
+				path: this.target,
+			};
+		}
+		else {
+			options = {
+				host: this.target,
+				port: this.port,
+				family: af
+			};
+		}
 
 		var transport;
 		try {
