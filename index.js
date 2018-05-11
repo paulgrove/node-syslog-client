@@ -150,7 +150,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 
 Client.prototype.close = function close() {
 	if (this.transport_) {
-		if (this.transport === Transport.Tcp || this.transport == Transport.Unix)
+		if (this.transport === Transport.Tcp || this.transport === Transport.Unix)
 			this.transport_.destroy();
 		if (this.transport === Transport.Udp)
 			this.transport_.close();
@@ -205,7 +205,7 @@ Client.prototype.log = function log() {
 			return cb(error);
 
 		try {
-			if (me.transport === Transport.Tcp || me.transport == Transport.Unix) {
+			if (me.transport === Transport.Tcp || me.transport === Transport.Unix) {
 				transport.write(fm, function(error) {
 					if (error)
 						return cb(new Error("net.write() failed: " + error.message));
@@ -257,7 +257,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 		var options;
 		if (this.transport === Transport.Unix) {
 			options = {
-				path: this.target,
+				path: this.target
 			};
 		}
 		else {
