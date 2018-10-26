@@ -160,7 +160,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
         console.log(formattedMessage)
     }
 
-    return new Buffer(formattedMessage);
+    return new Buffer.from(formattedMessage);
 };
 
 Client.prototype.close = function close() {
