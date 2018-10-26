@@ -67,7 +67,9 @@ function Client(target, options) {
     this.severity = options.severity || Severity.Informational;
     this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
     this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/") + 1, 48);
-    this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
+    this.dateFormatter = options.dateFormatter || function() {
+        return this.toISOString();
+    };
 
     this.transport = Transport.Udp;
     if (options.transport &&
@@ -81,11 +83,13 @@ function Client(target, options) {
 function _createStructuredData(structuredData) {
     var output = "";
     for (var i in structuredData) {
-        output = "[" + i;
-        for (var j in structuredData[i]) {
-            output += " " + j + "=" + structuredData[i][j];
+        if (structuredData.hasOwnProperty(i)) {
+            output = "[" + i;
+            for (var j in structuredData[i])
+                if (structuredData[i].hasOwnProperty(j))
+                    output += " " + j + "=" + structuredData[i][j];
+            output += "]"
         }
-        output += "]"
     }
 
     return output;
