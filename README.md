@@ -119,6 +119,7 @@ The optional `target` parameter defaults to `127.0.0.1`.  The optional
    format.
  * `appName` - set the APP-NAME field when using `rfc5424`; default uses `process.title`
  * `dateFormatter` - change the default date formatter when using `rfc5424`; interface: `function(date) { return string; }`; defaults to `function(date) { return date.toISOString(); }`
+ * `udpBindAddress` - set to bind an UDP socket only on a specific address; default node behavior is to bind to `0.0.0.0` (all network adresses of the machine)
 
 ## client.on("close", callback)
 

@@ -69,6 +69,7 @@ function Client(target, options) {
   this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
     this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
+	this.udpBindAddress = options.udpBindAddress;
 
 	this.transport = Transport.Udp;
 	if (options.transport &&
@@ -294,6 +295,13 @@ Client.prototype.getTransport = function getTransport(cb) {
 	} else if (this.transport === Transport.Udp) {
         try {
             this.transport_ = dgram.createSocket("udp" + af);
+
+            // if not binding on a particular address
+            // node will bind to 0.0.0.0
+            if (this.udpBindAddress) {
+                // avoid binding to all addresses
+                this.transport_.bind({ address: this.udpBindAddress })
+            }
         }
         catch (err) {
             doCb(err);
