@@ -26,6 +26,7 @@ _expandConstantObject(Transport);
 var Facility = {
 	Kernel: 0,
 	User:   1,
+	User:   2,
 	System: 3,
 	Daemon: 3,
 	Auth:   4,
