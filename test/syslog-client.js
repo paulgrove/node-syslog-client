@@ -285,6 +285,50 @@ describe("Syslog Client", function () {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
 		});
 	});
+	it("should bind UDP socket to specific network address and send log(s)", function () {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogUdpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Udp,
+			udpBindAddress: "127.0.0.1"
+		});
+
+		client.log("This is a test");
+
+		return awaitSyslogUdpMsg()
+		.then(function (msg) {
+			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test"));
+			client.log("This is a second test");
+			return awaitSyslogUdpMsg();
+		})
+		.then(function (msg) {
+			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+		});
+	});
+	it("should fail when binding UDP socket to unknown network address", function () {
+		var hostname = "testhostname";
+		var client = new syslogClient.createClient("127.0.0.1", {
+			port: syslogUdpPort,
+			syslogHostname: hostname,
+			transport: syslogClient.Transport.Udp,
+			udpBindAddress: "500.500.500.500" // invalid IP
+		});
+
+		decFn = function () {
+			done();
+		};
+
+		client.on("error", function (err) {
+			err.should.be.instanceof(Error);
+			decFn();
+		});
+
+		client.log("shouldn't work", function (err) {
+			err.should.be.instanceof(Error);
+			decFn();
+		});
+	});
 	it("should connect to TCP and send log(s)", function () {
 		var hostname = "testhostname";
 		var client = new syslogClient.createClient("127.0.0.1", {
