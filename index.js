@@ -80,9 +80,9 @@ function Client(target, options) {
 	this.getTransportRequests = [];
 	this.facility = options.facility || Facility.Local0;
 	this.severity =	options.severity || Severity.Informational;
-  this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
+	this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
-  this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
+	this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
 	this.udpBindAddress = options.udpBindAddress;
 
 	this.transport = Transport.Udp;
@@ -207,12 +207,12 @@ Client.prototype.log = function log() {
 	if (typeof options.rfc3164 !== "boolean") {
 		options.rfc3164 = this.rfc3164;
 	}
-  if (typeof options.appName === "undefined") {
-    options.appName = this.appName;
-  }
-  if (typeof options.syslogHostname === "undefined") {
-    options.syslogHostname = this.syslogHostname;
-  }
+	if (typeof options.appName === "undefined") {
+		options.appName = this.appName;
+	}
+	if (typeof options.syslogHostname === "undefined") {
+		options.syslogHostname = this.syslogHostname;
+	}
 
 	var fm = this.buildFormattedMessage(message, options);
 
@@ -320,20 +320,20 @@ Client.prototype.getTransport = function getTransport(cb) {
 
 		transport.unref();
 	} else if (this.transport === Transport.Udp) {
-        try {
-            this.transport_ = dgram.createSocket("udp" + af);
+		try {
+			this.transport_ = dgram.createSocket("udp" + af);
 
-            // if not binding on a particular address
-            // node will bind to 0.0.0.0
-            if (this.udpBindAddress) {
-                // avoid binding to all addresses
-                this.transport_.bind({ address: this.udpBindAddress })
-            }
-        }
-        catch (err) {
-            doCb(err);
-            this.onError(err);
-        }
+			// if not binding on a particular address
+			// node will bind to 0.0.0.0
+			if (this.udpBindAddress) {
+				// avoid binding to all addresses
+				this.transport_.bind({ address: this.udpBindAddress })
+			}
+		}
+		catch (err) {
+			doCb(err);
+			this.onError(err);
+		}
 	} else if (this.transport === Transport.Tls) {
 		var tlsOptions = {
 			host: this.target,
