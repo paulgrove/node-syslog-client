@@ -1,11 +1,11 @@
 {
   "name": "syslog-client",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "TCP and UDP syslog client RFC 5424 & RFC 3164",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec",
-	"coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
   },
   "directories": {
     "example": "example"
@@ -23,6 +23,10 @@
     {
       "name": "Tim Garthwaite",
       "email": "tim@mividstudios.com"
+    },
+    {
+      "name": "Seth Blumberg",
+      "email": "sethb@pobox.com"
     }
   ],
   "repository": {
@@ -39,14 +43,15 @@
     "tcp-syslog",
     "tcp-syslog-client",
     "udp-syslog",
-    "udp-syslog-client"
+    "udp-syslog-client",
+    "tls"
   ],
   "author": "Paul Grove <paul.a.grove@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "bluebird": "^3.4.6",
     "chai": "^3.5.0",
-    "mocha": "^3.0.2",
-	"bluebird": "^3.4.6",
-    "istanbul": "^0.4.5"
+    "istanbul": "^0.4.5",
+    "mocha": "^3.0.2"
   }
 }

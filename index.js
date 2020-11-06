@@ -1,10 +1,12 @@
 
 // Copyright 2015-2016 Stephen Vickers <stephen.vickers.sv@gmail.com>
+// with contributions 2017 by Seth Blumberg <sethb@pobox.com>
 
 var dgram = require("dgram");
 var events = require("events");
 var net = require("net");
 var os = require("os");
+var tls = require("tls");
 var util = require("util");
 
 function _expandConstantObject(object) {
@@ -18,7 +20,8 @@ function _expandConstantObject(object) {
 
 var Transport = {
 	Tcp: 1,
-	Udp: 2
+	Udp: 2,
+	Tls: 3
 };
 
 _expandConstantObject(Transport);
@@ -26,7 +29,17 @@ _expandConstantObject(Transport);
 var Facility = {
 	Kernel: 0,
 	User:   1,
+	User:   2,
 	System: 3,
+	Daemon: 3,
+	Auth:   4,
+	Syslog: 5,
+	Lpr:    6,
+	News:   7,
+	Uucp:   8,
+	Cron:   9,
+	Authpriv: 10,
+	Ftp:    11,
 	Audit:  13,
 	Alert:  14,
 	Local0: 16,
@@ -68,14 +81,18 @@ function Client(target, options) {
 	this.severity =	options.severity || Severity.Informational;
   this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
-    this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
+  this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
 	this.udpBindAddress = options.udpBindAddress;
 
 	this.transport = Transport.Udp;
 	if (options.transport &&
 		options.transport === Transport.Udp ||
-		options.transport === Transport.Tcp)
+		options.transport === Transport.Tcp ||
+		options.transport === Transport.Tls)
 			this.transport = options.transport;
+	if (this.transport === Transport.Tls) {
+		this.tlsCA = options.tlsCA;
+	}
 
 	return this;
 }
@@ -144,16 +161,16 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 				+ newline;
 	}
 
-	return new Buffer(formattedMessage);
+	return Buffer.from(formattedMessage);
 };
 
 Client.prototype.close = function close() {
 	if (this.transport_) {
-		if (this.transport === Transport.Tcp)
+		if (this.transport === Transport.Tcp || this.transport === Transport.Tls)
 			this.transport_.destroy();
 		if (this.transport === Transport.Udp)
 			this.transport_.close();
-		delete this.transport_;
+		this.transport_ = undefined;
 	} else {
 		this.onClose();
 	}
@@ -204,7 +221,7 @@ Client.prototype.log = function log() {
 			return cb(error);
 
 		try {
-			if (me.transport === Transport.Tcp) {
+			if (me.transport === Transport.Tcp || me.transport === Transport.Tls) {
 				transport.write(fm, function(error) {
 					if (error)
 						return cb(new Error("net.write() failed: " + error.message));
@@ -307,9 +324,60 @@ Client.prototype.getTransport = function getTransport(cb) {
             doCb(err);
             this.onError(err);
         }
+	} else if (this.transport === Transport.Tls) {
+		var tlsOptions = {
+			host: this.target,
+			port: this.port,
+			family: af,
+			ca: this.tlsCA,
+			secureProtocol: 'TLSv1_2_method'
+		};
 
-        if (!this.transport_)
+		var tlsTransport;
+		try {
+			tlsTransport = tls.connect(tlsOptions, function() {
+				me.transport_ = tlsTransport;
+				doCb(null, me.transport_);
+			});
+		} catch (err) {
+			doCb(err);
+			me.onError(err);
+		}
+
+		if (!tlsTransport)
+
 			return;
+
+		tlsTransport.setTimeout(this.tcpTimeout, function() {
+			var err = new Error("connection timed out");
+			me.emit("error", err);
+			doCb(err);
+		});
+
+		tlsTransport.on("end", function() {
+			var err = new Error("connection closed");
+			me.emit("error", err);
+			doCb(err);
+		});
+
+		tlsTransport.on("close", me.onClose.bind(me));
+		tlsTransport.on("error", function (err) {
+			doCb(err);
+			me.onError(err);
+		});
+
+		tlsTransport.unref();
+	} else if (this.transport === Transport.Udp) {
+		try {
+			this.transport_ = dgram.createSocket("udp" + af);
+		}
+		catch (err) {
+			doCb(err);
+			this.onError(err);
+		}
+
+		if (!this.transport_)
+		return;
 
 		this.transport_.on("close", this.onClose.bind(this));
 		this.transport_.on("error", function (err) {
@@ -327,7 +395,7 @@ Client.prototype.getTransport = function getTransport(cb) {
 
 Client.prototype.onClose = function onClose() {
 	if (this.transport_)
-		delete this.transport_;
+		this.transport_ = undefined;
 
 	this.emit("close");
 
@@ -336,7 +404,7 @@ Client.prototype.onClose = function onClose() {
 
 Client.prototype.onError = function onError(error) {
 	if (this.transport_)
-		delete this.transport_;
+		this.transport_ = undefined;
 
 	this.emit("error", error);
 
