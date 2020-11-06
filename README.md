@@ -50,7 +50,17 @@ attribute passed to the `options` argument for the `log()` method on the
 
  * `Kernel` - 0
  * `User` - 1
+ * `Mail` - 2
  * `System` - 3
+ * `Daemon` - 3
+ * `Auth` - 4
+ * `Syslog` - 5
+ * `Lpr` - 6
+ * `News` - 7
+ * `Uucp` - 8
+ * `Cron` - 9
+ * `Authpriv` - 10
+ * `Ftp` - 11
  * `Audit` - 13
  * `Alert` - 14
  * `Local0` - 16
@@ -120,6 +130,7 @@ The optional `target` parameter defaults to `127.0.0.1`.  The optional
    format.
  * `appName` - set the APP-NAME field when using `rfc5424`; default uses `process.title`
  * `dateFormatter` - change the default date formatter when using `rfc5424`; interface: `function(date) { return string; }`; defaults to `function(date) { return date.toISOString(); }`
+ * `udpBindAddress` - set to bind an UDP socket only on a specific address; default node behavior is to bind to `0.0.0.0` (all network adresses of the machine)
 
 For Unix sockets (TCP only), set `target` to the path of Unix socket.
 
