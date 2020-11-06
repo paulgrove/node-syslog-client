@@ -143,7 +143,7 @@ Client.prototype.buildFormattedMessage = function buildFormattedMessage(message,
 				+ newline;
 	}
 
-	return new Buffer(formattedMessage);
+	return Buffer.from(formattedMessage);
 };
 
 Client.prototype.close = function close() {
