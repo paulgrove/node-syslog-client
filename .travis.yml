@@ -1,10 +1,11 @@
 language: node_js
 node_js:
+    - "15"
+    - "14"
     - "6"
     - "5"
     - "4"
     - "0.12.17"
-    - "0.10.48"
     - "iojs"
 script:
     - npm run coverage
