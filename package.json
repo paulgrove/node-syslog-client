@@ -4,8 +4,8 @@
   "description": "TCP and UDP syslog client RFC 5424 & RFC 3164",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec",
-    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
+    "test": "mocha --reporter spec",
+    "coverage": "nyc npm run test"
   },
   "directories": {
     "example": "example"
@@ -51,7 +51,7 @@
   "devDependencies": {
     "bluebird": "^3.4.6",
     "chai": "^3.5.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.0.2"
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0"
   }
 }
