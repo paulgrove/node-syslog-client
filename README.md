@@ -40,6 +40,7 @@ The following constants are defined in this object:
 
  * `Tcp`
  * `Udp`
+ * `Unix`
 
 ## syslog.Facility
 
@@ -120,7 +121,7 @@ The optional `target` parameter defaults to `127.0.0.1`.  The optional
    TCP acknowledgements when sending messages using the TCP transport,
    defaults to `10000` (i.e. 10 seconds)
  * `transport` - Specify the transport to use, can be either
-   `syslog.Transport.Udp` or `syslog.Transport.Tcp`, defaults to
+   `syslog.Transport.Udp` or `syslog.Transport.Tcp` or `syslog.Transport.Unix`, defaults to
    `syslog.Transport.Udp`
  * `facility` - set default for `client.log()`; default is `syslog.Facility.Local0`.
  * `severity` - set default for `client.log()`; default is `syslog.Severity.Informational`.
@@ -130,6 +131,8 @@ The optional `target` parameter defaults to `127.0.0.1`.  The optional
  * `appName` - set the APP-NAME field when using `rfc5424`; default uses `process.title`
  * `dateFormatter` - change the default date formatter when using `rfc5424`; interface: `function(date) { return string; }`; defaults to `function(date) { return date.toISOString(); }`
  * `udpBindAddress` - set to bind an UDP socket only on a specific address; default node behavior is to bind to `0.0.0.0` (all network adresses of the machine)
+
+For Unix sockets (TCP only), set `target` to the path of Unix socket.
 
 ## client.on("close", callback)
 
