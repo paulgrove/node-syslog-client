@@ -40,6 +40,7 @@ The following constants are defined in this object:
 
  * `Tcp`
  * `Udp`
+ * `Tls`
  * `Unix`
 
 ## syslog.Facility
