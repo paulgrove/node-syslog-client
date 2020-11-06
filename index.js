@@ -21,7 +21,7 @@ function _expandConstantObject(object) {
 var Transport = {
 	Tcp:  1,
 	Udp:  2,
-  Tls:  3,
+	Tls:  3,
 	Unix: 4
 };
 
@@ -30,7 +30,7 @@ _expandConstantObject(Transport);
 var Facility = {
 	Kernel: 0,
 	User:   1,
-	User:   2,
+	Mail:   2,
 	System: 3,
 	Daemon: 3,
 	Auth:   4,
