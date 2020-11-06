@@ -2,8 +2,10 @@
 import { EventEmitter } from 'events';
 
 export enum Transport {
-	Tcp = 1,
-	Udp = 2
+	Tcp  = 1,
+	Udp  = 2,
+	Tls  = 3,
+	Unix = 4
 }
 
 export enum Facility {
@@ -54,7 +56,8 @@ export interface ClientOptions {
 	dateFormatter?: (() => string),
 	transport?: Transport,
 	timestamp?: Date,
-	msgid?: string
+	msgid?: string,
+	udpBindAddress: string
 }
 
 export interface MessageOptions {
