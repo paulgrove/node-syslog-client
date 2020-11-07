@@ -218,7 +218,7 @@ Client.prototype.log = function log() {
 
 	var me = this;
 
-	this.getTransport(function(error, transport) {
+	me.getTransport(function(error, transport) {
 		if (error)
 			return cb(error);
 
@@ -231,8 +231,9 @@ Client.prototype.log = function log() {
 				});
 			} else if (me.transport === Transport.Udp) {
 				transport.send(fm, 0, fm.length, me.port, me.target, function(error, bytes) {
-					if (error)
+					if (error) {
 						return cb(new Error("dgram.send() failed: " + error.message));
+					}
 					return cb();
 				});
 			} else {
@@ -302,8 +303,13 @@ Client.prototype.getTransport = function getTransport(cb) {
 
 		transport.setTimeout(this.tcpTimeout, function() {
 			var err = new Error("connection timed out");
+			transport.destroy();
 			me.emit("error", err);
 			doCb(err);
+		});
+
+		transport.once("connect", function () {
+			transport.setTimeout(0);
 		});
 
 		transport.on("end", function() {
@@ -314,26 +320,12 @@ Client.prototype.getTransport = function getTransport(cb) {
 
 		transport.on("close", me.onClose.bind(me));
 		transport.on("error", function (err) {
+			transport.destroy();
 			doCb(err);
 			me.onError(err);
 		});
 
 		transport.unref();
-	} else if (this.transport === Transport.Udp) {
-		try {
-			this.transport_ = dgram.createSocket("udp" + af);
-
-			// if not binding on a particular address
-			// node will bind to 0.0.0.0
-			if (this.udpBindAddress) {
-				// avoid binding to all addresses
-				this.transport_.bind({ address: this.udpBindAddress })
-			}
-		}
-		catch (err) {
-			doCb(err);
-			this.onError(err);
-		}
 	} else if (this.transport === Transport.Tls) {
 		var tlsOptions = {
 			host: this.target,
@@ -364,6 +356,10 @@ Client.prototype.getTransport = function getTransport(cb) {
 			doCb(err);
 		});
 
+		tlsTransport.once("connect", function () {
+			tlsTransport.setTimeout(0);
+		});
+
 		tlsTransport.on("end", function() {
 			var err = new Error("connection closed");
 			me.emit("error", err);
@@ -380,14 +376,26 @@ Client.prototype.getTransport = function getTransport(cb) {
 	} else if (this.transport === Transport.Udp) {
 		try {
 			this.transport_ = dgram.createSocket("udp" + af);
+
+			// if not binding on a particular address
+			// node will bind to 0.0.0.0
+			if (this.udpBindAddress) {
+				// avoid binding to all addresses
+				this.transport_.bind({ address: this.udpBindAddress })
+			}
 		}
 		catch (err) {
+			try {
+				this.transport_.destroy();
+			} catch (err2) {
+				// ignore cleanup error
+			}
 			doCb(err);
 			this.onError(err);
 		}
 
 		if (!this.transport_)
-		return;
+			return;
 
 		this.transport_.on("close", this.onClose.bind(this));
 		this.transport_.on("error", function (err) {
@@ -404,8 +412,11 @@ Client.prototype.getTransport = function getTransport(cb) {
 };
 
 Client.prototype.onClose = function onClose() {
-	if (this.transport_)
+	if (this.transport_) {
+		if (this.transport_.destroy)
+			this.transport_.destroy();
 		this.transport_ = undefined;
+	}
 
 	this.emit("close");
 
@@ -413,8 +424,11 @@ Client.prototype.onClose = function onClose() {
 };
 
 Client.prototype.onError = function onError(error) {
-	if (this.transport_)
+	if (this.transport_) {
+		if (this.transport_.destroy)
+			this.transport_.destroy();
 		this.transport_ = undefined;
+	}
 
 	this.emit("error", error);
 
