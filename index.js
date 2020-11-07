@@ -78,8 +78,8 @@ function Client(target, options) {
 	this.port = options.port || 514;
 	this.tcpTimeout = options.tcpTimeout || 10000;
 	this.getTransportRequests = [];
-	this.facility = options.facility || Facility.Local0;
-	this.severity =	options.severity || Severity.Informational;
+	this.facility = typeof options.facility !== "number" || Facility.Local0;
+	this.severity =	typeof options.severity !== "number" || Severity.Informational;
 	this.rfc3164 = typeof options.rfc3164 === 'boolean' ? options.rfc3164 : true;
 	this.appName = options.appName || process.title.substring(process.title.lastIndexOf("/")+1, 48);
 	this.dateFormatter = options.dateFormatter || function() { return this.toISOString(); };
