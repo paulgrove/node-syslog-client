@@ -170,6 +170,13 @@ before(function (_done) {
 	});
 });
 
+after(function (done) {
+	udpServer.close();
+	tlsServer.close();
+	tcpServer.close();
+	done();
+});
+
 describe("Syslog Client", function () {
 	// eslint-disable-next-line max-statements
 	it("should set options correctly with defaults", function (done) {
@@ -283,7 +290,8 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
-		});
+			client.close();
+		})
 	});
 	it("should bind UDP socket to specific network address and send log(s)", function () {
 		var hostname = "testhostname";
@@ -304,9 +312,10 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			client.close();
 		});
 	});
-	it("should fail when binding UDP socket to unknown network address", function () {
+	it("should fail when binding UDP socket to unknown network address", function (done) {
 		var hostname = "testhostname";
 		var client = new syslogClient.createClient("127.0.0.1", {
 			port: syslogUdpPort,
@@ -315,12 +324,18 @@ describe("Syslog Client", function () {
 			udpBindAddress: "500.500.500.500" // invalid IP
 		});
 
-		decFn = function () {
-			done();
-		};
+		var count = 2,
+			decFn = function () {
+				count--;
+				if (count === 0) {
+					client.close();
+					done();
+				}
+			};
 
 		client.on("error", function (err) {
 			err.should.be.instanceof(Error);
+			if (decFn)
 			decFn();
 		});
 
@@ -347,6 +362,7 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			client.close();
 		});
 	});
 	it("should connect to TCP with TLS and send log(s)", function () {
@@ -368,6 +384,7 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			client.close();
 		});
 	});
 	it("should reuse the UDP transport", function () {
@@ -390,6 +407,7 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.equal(transport_, client.transport_);
+			client.close();
 		});
 	});
 	it("should reuse the TCP transport", function () {
@@ -412,6 +430,7 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.equal(transport_, client.transport_);
+			client.close();
 		});
 	});
 	it("should reuse the TLS transport", function () {
@@ -435,6 +454,7 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.equal(transport_, client.transport_);
+			client.close();
 		});
 	});
 	it("should call close event when closed UDP", function (done) {
@@ -522,6 +542,7 @@ describe("Syslog Client", function () {
 			.then(function (msg) {
 				assert.match(msg, constructSyslogRegex(134, hostname,
 					"Restart connection test"));
+				client.close();
 				done();
 			})
 		});
@@ -546,6 +567,7 @@ describe("Syslog Client", function () {
 			.then(function (msg) {
 				assert.match(msg, constructSyslogRegex(134, hostname,
 					"Restart connection test"));
+				client.close();
 				done();
 			})
 		});
@@ -571,6 +593,7 @@ describe("Syslog Client", function () {
 			.then(function (msg) {
 				assert.match(msg, constructSyslogRegex(134, hostname,
 					"Restart connection test"));
+				client.close();
 				done();
 			})
 		});
@@ -619,8 +642,10 @@ describe("Syslog Client", function () {
 		var count = 2,
 			decFn = function () {
 				count--;
-				if (count === 0)
+				if (count === 0) {
+					client.close();
 					done();
+				}
 			};
 
 		client.log("anything", decFn);
@@ -637,8 +662,10 @@ describe("Syslog Client", function () {
 		var count = 2,
 			decFn = function () {
 				count--;
-				if (count === 0)
+				if (count === 0) {
+					client.close();
 					done();
+				}
 			};
 
 		client.log("anything", {
@@ -662,8 +689,10 @@ describe("Syslog Client", function () {
 		var count = 2,
 			decFn = function () {
 				count--;
-				if (count === 0)
+				if (count === 0) {
+					client.close();
 					done();
+				}
 			};
 
 		client.log("anything", {
@@ -680,6 +709,7 @@ describe("Syslog Client", function () {
 		var hostname = "testhostname";
 		var client = new syslogClient.createClient("127.0.0.1", {
 			port: 502342323, // hopefully this isnt in use, TODO find free ports for testing
+			tcpTimeout: 2000,
 			syslogHostname: hostname,
 			transport: syslogClient.Transport.Tcp
 		});
@@ -687,8 +717,10 @@ describe("Syslog Client", function () {
 		var count = 2,
 			decFn = function () {
 				count--;
-				if (count === 0)
+				if (count === 0) {
+					client.close();
 					done();
+				}
 			};
 
 		client.on("error", function (err) {
@@ -705,6 +737,7 @@ describe("Syslog Client", function () {
 		var hostname = "testhostname";
 		var client = new syslogClient.createClient("localhost", {
 			port: 512342317, // hopefully this isnt in use, TODO find free ports for testing
+			tcpTimeout: 2000,
 			syslogHostname: hostname,
 			transport: syslogClient.Transport.Tls,
 			tlsCA: tlsCertificate
@@ -828,6 +861,7 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			client.close();
 		});
 	});
 	it("should connect to UDP and send back-dated RFC 5424 log(s)", function () {
@@ -853,9 +887,10 @@ describe("Syslog Client", function () {
 		})
 		.then(function (msg) {
 			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a second test", "-"));
+			client.close();
 		});
 	});
-	it("should refuse to connect to TLS with invalid certificate", function () {
+	it("should refuse to connect to TLS with invalid certificate", function (done) {
 		var hostname = "testhostname";
 		var client = new syslogClient.createClient("localhost", {
 			port: syslogTlsPort,
