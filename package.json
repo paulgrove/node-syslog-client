@@ -4,7 +4,7 @@
   "description": "TCP and UDP syslog client RFC 5424 & RFC 3164",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec",
+    "test": "mocha --reporter spec --exit",
     "coverage": "nyc npm run test"
   },
   "directories": {
