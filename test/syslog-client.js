@@ -284,12 +284,12 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogUdpMsg()
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a test"));
 			client.log("This is a second test");
 			return awaitSyslogUdpMsg();
 		})
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a second test"));
 			client.close();
 		})
 	});
@@ -306,12 +306,12 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogUdpMsg()
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a test"));
 			client.log("This is a second test");
 			return awaitSyslogUdpMsg();
 		})
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a second test"));
 			client.close();
 		});
 	});
@@ -356,12 +356,12 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogTcpMsg()
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a test"));
 			client.log("This is a second test");
 			return awaitSyslogTcpMsg();
 		})
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a second test"));
 			client.close();
 		});
 	});
@@ -378,12 +378,12 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogTlsMsg()
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a test"));
 			client.log("This is a second test");
 			return awaitSyslogTlsMsg();
 		})
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a second test"));
 			client.close();
 		});
 	});
@@ -540,7 +540,7 @@ describe("Syslog Client", function () {
 			client.log("Restart connection test");
 			awaitSyslogUdpMsg()
 			.then(function (msg) {
-				assert.match(msg, constructSyslogRegex(134, hostname,
+				assert.match(msg, constructSyslogRegex(9, hostname,
 					"Restart connection test"));
 				client.close();
 				done();
@@ -565,7 +565,7 @@ describe("Syslog Client", function () {
 			client.log("Restart connection test");
 			awaitSyslogTcpMsg()
 			.then(function (msg) {
-				assert.match(msg, constructSyslogRegex(134, hostname,
+				assert.match(msg, constructSyslogRegex(9, hostname,
 					"Restart connection test"));
 				client.close();
 				done();
@@ -591,7 +591,7 @@ describe("Syslog Client", function () {
 			client.log("Restart connection test");
 			awaitSyslogTlsMsg()
 			.then(function (msg) {
-				assert.match(msg, constructSyslogRegex(134, hostname,
+				assert.match(msg, constructSyslogRegex(9, hostname,
 					"Restart connection test"));
 				client.close();
 				done();
@@ -853,14 +853,14 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogUdpMsg()
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a test", backdate));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a test", backdate));
 			client.log("This is a second test", {
 				rfc3164: true, msgid: 102938
 			});
 			return awaitSyslogUdpMsg();
 		})
 		.then(function (msg) {
-			assert.match(msg, constructSyslogRegex(134, hostname, "This is a second test"));
+			assert.match(msg, constructSyslogRegex(9, hostname, "This is a second test"));
 			client.close();
 		});
 	});
@@ -879,14 +879,14 @@ describe("Syslog Client", function () {
 
 		return awaitSyslogUdpMsg()
 		.then(function (msg) {
-			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a test", 98765, backdate));
+			assert.match(msg, constructRfc5424Regex(9, hostname, "This is a test", 98765, backdate));
 			client.log("This is a second test", {
 				rfc3164: false
 			});
 			return awaitSyslogUdpMsg();
 		})
 		.then(function (msg) {
-			assert.match(msg, constructRfc5424Regex(134, hostname, "This is a second test", "-"));
+			assert.match(msg, constructRfc5424Regex(9, hostname, "This is a second test", "-"));
 			client.close();
 		});
 	});
