@@ -57,7 +57,7 @@ export interface ClientOptions {
 	transport?: Transport,
 	timestamp?: Date,
 	msgid?: string,
-	udpBindAddress: string
+	udpBindAddress?: string
 }
 
 export interface MessageOptions {
